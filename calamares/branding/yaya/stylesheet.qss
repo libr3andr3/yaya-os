@@ -1,0 +1,53 @@
+/*
+ * SPDX-FileCopyrightText: no
+ * SPDX-License-Identifier: CC0-1.0
+ *
+ * Yaya OS dark theme — black canvas, silver (#cfd4da) ink.
+ */
+
+#mainApp {
+    background-color: #000000;
+    color: #cfd4da;
+}
+
+#sidebarApp {
+    background-color: #000000;
+    color: #cfd4da;
+}
+
+#logoApp {
+    background-color: #000000;
+}
+
+/* Welcome-page action buttons */
+QPushButton#aboutButton,
+#donateButton,
+#supportButton,
+#releaseNotesButton,
+#knownIssuesButton {
+    color: #cfd4da;
+}
+
+/* Primary navigation buttons */
+QPushButton {
+    background-color: #15181c;
+    color: #cfd4da;
+    border: 1px solid #2a2f36;
+    border-radius: 4px;
+    padding: 6px 14px;
+}
+
+QPushButton:hover {
+    background-color: #23282f;
+    border-color: #cfd4da;
+}
+
+QPushButton:pressed {
+    background-color: #cfd4da;
+    color: #000000;
+}
+
+QPushButton:disabled {
+    color: #5b636c;
+    border-color: #1c2025;
+}

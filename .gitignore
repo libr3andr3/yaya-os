@@ -1,0 +1,11 @@
+# ISO images (too large for git, distribute separately)
+*.iso
+*.iso.sha256
+*.iso.asc
+
+# Build artifacts
+build-yaya-os/
+*.log
+
+# Backup files
+*.bak-precalamares

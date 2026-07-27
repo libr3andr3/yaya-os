@@ -1,0 +1,62 @@
+# SPDX-FileCopyrightText: no
+# SPDX-License-Identifier: CC0-1.0
+#
+# Yaya OS — Calamares branding component "yaya"
+# Silver alien (#cfd4da) on pure black, "Yaya Tech" lockup.
+---
+componentName:  yaya
+
+# Distinguish this installer as Calamares-based in the welcome text.
+welcomeStyleCalamares:   false
+welcomeExpandingLogo:    true
+
+### WINDOW
+windowExpanding:    normal
+windowSize:         900px,560px
+windowPlacement:    center
+
+### PANELS
+sidebar:     widget
+navigation:  widget
+
+### STRINGS
+# Strings support ${varname} substitution from /etc/os-release.
+# Yaya OS ships: NAME="Yaya OS", VERSION_ID=2.0, VERSION_CODENAME=alien.
+strings:
+    productName:         "Yaya OS"
+    shortProductName:    "Yaya OS"
+    version:             "2.0"
+    shortVersion:        "2.0"
+    versionedName:       "Yaya OS 2.0 \"alien\""
+    shortVersionedName:  "Yaya OS 2.0"
+    bootloaderEntryName: "Yaya OS"
+    productUrl:          "https://yaya.sh"
+    supportUrl:          "https://yaya.cash"
+    knownIssuesUrl:      ""
+    releaseNotesUrl:     ""
+    donateUrl:           ""
+
+### IMAGES
+# Rasterized from branding/ SVGs at deploy time (see setup-yaya-calamares.sh).
+images:
+    productIcon:      "yaya-logo.png"
+    productLogo:      "yaya-logo.png"
+    productWelcome:   "yaya-welcome.png"
+
+### COLORS
+# Dark theme: black sidebar, silver text, silver highlight for current step.
+style:
+    SidebarBackground:        "#000000"
+    SidebarText:              "#cfd4da"
+    SidebarTextCurrent:       "#000000"
+    SidebarBackgroundCurrent: "#cfd4da"
+
+### SLIDESHOW
+slideshow:      "show.qml"
+slideshowAPI:   2
+
+# Log upload disabled by default for a privacy-minded distro.
+uploadServer:
+    type:      "none"
+    url:       ""
+    sizeLimit: -1
