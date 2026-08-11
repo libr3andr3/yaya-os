@@ -13,6 +13,14 @@ setup-yaya-branding.sh       # BRANDING DE ARRANQUE: os-release, hostname,
                              #   splash Plymouth (lockup), logo del SO (alien)
 setup-yaya-wallets.sh        # Electrum (BTC) + Feather (XMR) -> nodos yaya.cash
 setup-yaya-touch.sh          # (opcional) soporte táctil para XFCE
+setup-yaya-fastfetch.sh      # fastfetch con marca Yaya: alien en la terminal,
+                             #   config global + saludo al abrir terminal
+yaya-webcam.sh               # puente DSLR -> /dev/video42 con banner Yaya
+fastfetch/                   # assets de terminal
+  config.jsonc               #   default del sistema (-> /etc/fastfetch)
+  webcam.jsonc / -compact    #   banner del dashboard de yaya-webcam
+  yaya-logo*.txt             #   alien ASCII fijo (fallback)
+  yaya-logo-gen.py           #   re-renderiza el alien al tamaño de terminal
 branding/                    # marca REAL vectorizada (Yaya Tech), SVG puro
   yaya-logo.svg              #   alien solo (logo del SO)
   yaya-logo-full.svg         #   lockup alien + "Yaya Tech" (transparente)
@@ -55,6 +63,26 @@ propio hook). Corre como hook `0520`.
 Los assets de `branding/` ya están vectorizados y versionados. Si cambia
 el logo original, se re-vectoriza con VTracer (ver el PNG fuente en
 `~/Downloads/yayatech.png`). No hace falta para construir la ISO.
+
+## Fastfetch con marca (setup-yaya-fastfetch.sh)
+
+La "cara" de Yaya OS en la terminal: `fastfetch` muestra el alien en ASCII
+junto a la info del sistema, en el verde-teal de la marca (`38;5;79`).
+
+- **Config global**: `/etc/fastfetch/config.jsonc` — aplica a todos los
+  usuarios; cualquiera la pisa con `~/.config/fastfetch/config.jsonc`.
+- **Logo vivo**: `yaya-logo-gen.py` re-renderiza el alien desde
+  `branding/yaya-logo.png` al tamaño exacto que se le pida (Pillow,
+  resample BOX + rampa de densidad). Los `.txt` fijos son el fallback
+  cuando no hay Pillow.
+- **Saludo**: las terminales nuevas abren con el banner (snippet en
+  `/etc/skel/.bashrc`, una vez por sesión vía `YAYA_FF_GREETED`).
+- **yaya-webcam**: puente DSLR → `/dev/video42` (gphoto2 + ffmpeg +
+  v4l2loopback) con el banner centrado en tmux y el contador de frames de
+  ffmpeg en la barra de estado. Los deps de streaming no van en la ISO
+  base; el script indica cómo instalarlos si faltan.
+
+Hook live-build: `config/hooks/live/0530-yaya-fastfetch.hook.chroot`.
 
 ## Táctil / pantallas táctiles
 

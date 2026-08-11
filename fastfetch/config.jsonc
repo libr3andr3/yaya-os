@@ -1,0 +1,35 @@
+// Yaya OS — configuración de fastfetch por defecto (todo el sistema).
+// Instalada en /etc/fastfetch/config.jsonc por setup-yaya-fastfetch.sh;
+// cualquier usuario puede sobreescribirla con ~/.config/fastfetch/config.jsonc.
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "file",
+    "source": "/usr/share/yaya/fastfetch/yaya-logo.txt",
+    "color": { "1": "38;5;79" },
+    "padding": { "top": 1, "left": 1, "right": 3 }
+  },
+  "display": {
+    "separator": "  ",
+    "color": { "keys": "38;5;79", "title": "38;5;79" }
+  },
+  "modules": [
+    { "type": "custom", "format": "\u001b[38;5;79m  Y A Y A   O S\u001b[0m" },
+    { "type": "custom", "format": "\u001b[38;5;238m ─────────────────────────────────\u001b[0m" },
+    { "type": "os", "key": " os " },
+    { "type": "kernel", "key": " kernel " },
+    { "type": "uptime", "key": " uptime " },
+    { "type": "packages", "key": " packages " },
+    { "type": "shell", "key": " shell " },
+    { "type": "de", "key": " desktop " },
+    { "type": "cpu", "key": " cpu " },
+    { "type": "gpu", "key": " gpu " },
+    { "type": "memory", "key": " memory " },
+    { "type": "disk", "key": " disk ", "folders": "/" },
+    "break",
+    { "type": "custom", "format": "\u001b[38;5;238m ─────────────────────────────────\u001b[0m" },
+    { "type": "custom", "format": "\u001b[38;5;79m  soberanía digital · yaya.tech\u001b[0m" },
+    "break",
+    { "type": "colors", "paddingLeft": 1, "symbol": "circle" }
+  ]
+}

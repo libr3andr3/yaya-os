@@ -1,0 +1,44 @@
+// Yaya OS webcam-dashboard banner.
+// Used by yaya-webcam; plain `fastfetch` is unaffected.
+// Logo file is picked at runtime (wide vs. small) via --logo-source.
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "file",
+    "source": "/usr/share/yaya/fastfetch/yaya-logo.txt",
+    "color": { "1": "38;5;79" },
+    "padding": { "top": 1, "left": 1, "right": 3 }
+  },
+  "display": {
+    "separator": "  ",
+    "color": { "keys": "38;5;79", "title": "38;5;79" }
+  },
+  "modules": [
+    { "type": "custom", "format": "\u001b[38;5;79m  Y A Y A   O S\u001b[0m" },
+    { "type": "custom", "format": "\u001b[38;5;238m ─────────────────────────────────\u001b[0m" },
+    { "type": "os", "key": " os " },
+    { "type": "kernel", "key": " kernel " },
+    { "type": "uptime", "key": " uptime " },
+    { "type": "cpu", "key": " cpu " },
+    { "type": "gpu", "key": " gpu " },
+    { "type": "memory", "key": " memory " },
+    { "type": "disk", "key": " disk ", "folders": "/" },
+    "break",
+    { "type": "custom", "format": "\u001b[38;5;238m ── stream ───────────────────────\u001b[0m" },
+    {
+      "type": "command",
+      "key": " camera ",
+      "text": "gphoto2 --auto-detect 2>/dev/null | awk -v pat=\"${YAYA_CAM_MATCH:-Canon}\" 'NR>2 && $0 ~ pat {f=1; sub(/[ \\t]+usb:.*/,\"\"); print; exit} END{if(!f) print \"no \" pat \" attached\"}'; true"
+    },
+    {
+      "type": "command",
+      "key": " sink ",
+      "text": "if [ -e /dev/video42 ]; then echo '/dev/video42  ready'; else echo '/dev/video42  not loaded'; fi"
+    },
+    {
+      "type": "command",
+      "key": " encoder ",
+      "text": "pgrep -x ffmpeg >/dev/null && echo 'ffmpeg  running' || echo 'ffmpeg  stopped'"
+    }
+  ]
+}

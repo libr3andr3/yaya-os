@@ -17,7 +17,7 @@ OS_NAME="Yaya OS"
 OS_ID="yaya"
 OS_VERSION="2.0"
 OS_CODENAME="alien"
-OS_HOME="https://yaya.sh"
+OS_HOME="https://yaya.tech"
 OS_SUPPORT="https://yaya.cash"
 
 ICON_HICOLOR=/usr/share/icons/hicolor
