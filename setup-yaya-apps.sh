@@ -36,7 +36,14 @@ cat > /etc/firefox-esr/policies/policies.json <<'JSON'
     "OverrideFirstRunPage": "",
     "OverridePostUpdatePage": "",
     "NoDefaultBookmarks": true,
-    "Homepage": { "URL": "https://yaya.tech", "StartPage": "homepage" }
+    "Homepage": { "URL": "https://yaya.tech", "StartPage": "homepage" },
+    "UserMessaging": { "SkipOnboarding": true, "ExtensionRecommendations": false,
+      "FeatureRecommendations": false, "MoreFromMozilla": false,
+      "UrlbarInterventions": false, "WhatsNew": false },
+    "Preferences": {
+      "datareporting.policy.dataSubmissionPolicyBypassNotification": { "Value": true, "Status": "locked" },
+      "browser.aboutwelcome.enabled": { "Value": false, "Status": "locked" }
+    }
   }
 }
 JSON
