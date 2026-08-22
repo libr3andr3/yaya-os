@@ -74,8 +74,11 @@ build_iso() {
     apt-get update && apt-get install -y live-build
   }
 
+  # Conservar la caché apt/bootstrap entre builds (ahorra ~10 min y ~1.4 GB de red)
+  [ -d "$BUILD_DIR/cache" ] && mv "$BUILD_DIR/cache" "${BUILD_DIR}.cache-keep"
   rm -rf "$BUILD_DIR"
   mkdir -p "$BUILD_DIR"
+  [ -d "${BUILD_DIR}.cache-keep" ] && mv "${BUILD_DIR}.cache-keep" "$BUILD_DIR/cache"
   cd "$BUILD_DIR"
 
   echo "==> Configurando árbol live-build"
