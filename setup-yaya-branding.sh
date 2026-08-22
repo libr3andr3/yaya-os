@@ -178,7 +178,15 @@ cat > /usr/local/sbin/yaya-postinstall <<'PI'
 set -e
 USR="${1:-yaya}"
 
-# 1) (sin autologin: SDDM preselecciona al usuario creado)
+# 1) Sin rastro del instalador en el sistema instalado
+#    (lanzador de escritorio/autostart/menú, wrapper, regla polkit del live)
+rm -f /usr/share/applications/yaya-install.desktop /usr/bin/yaya-install \
+      /etc/polkit-1/rules.d/49-yaya-calamares.rules \
+      /etc/skel/Desktop/yaya-install.desktop /etc/skel/.config/autostart/yaya-install.desktop
+for h in /home/* /root; do
+  rm -f "$h/Desktop/yaya-install.desktop" "$h/.config/autostart/yaya-install.desktop"
+done
+# (sin autologin: SDDM preselecciona al usuario creado)
 
 # 2) GRUB instalado: arranque silencioso (sin verbose) + timeout corto
 if [ -f /etc/default/grub ]; then
