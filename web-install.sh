@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================
-#   curl yaya.sh | bash   —   instalador de Yaya OS
+#   curl yaya.tech | bash   —   instalador de Yaya OS
 #
 # Descarga la ISO de Yaya OS, VERIFICA su firma GPG contra la
 # clave de release (fingerprint pineado abajo) y la graba en un
@@ -8,11 +8,12 @@
 # ============================================================
 set -euo pipefail
 
-BASE="${YAYA_BASE:-https://yaya.sh}"
+BASE="${YAYA_BASE:-https://yaya.tech}"
 ISO_URL="$BASE/yaya-os.iso"
 SIG_URL="$BASE/yaya-os.iso.asc"
 KEY_URL="$BASE/yaya-release.pub.asc"
-# Clave de firma de Yaya OS (releases@yaya.sh) — PINEADA:
+# Clave de firma de Yaya OS — PINEADA por huella (el UID de la clave aún dice
+# releases@yaya.sh; añadir un UID @yaya.tech requiere la clave privada):
 FPR="0599115B6BAE51AB1CA37BD819EF40CA504239C8"
 
 mag(){ printf "\033[1;35m%s\033[0m\n" "$*"; }   # magenta (el vibe Yaya)
@@ -36,7 +37,7 @@ echo "==> Descargando clave de firma y verificando huella…"
 curl -fsSL "$KEY_URL" -o "$TMP/key.asc" || { err "no pude bajar la clave"; exit 1; }
 export GNUPGHOME="$TMP/gnupg"; mkdir -p "$GNUPGHOME"; chmod 700 "$GNUPGHOME"
 gpg --quiet --import "$TMP/key.asc" 2>/dev/null
-GOT="$(gpg --with-colons --fingerprint releases@yaya.sh 2>/dev/null | awk -F: '/^fpr:/{print $10; exit}')"
+GOT="$(gpg --with-colons --fingerprint "$FPR" 2>/dev/null | awk -F: '/^fpr:/{print $10; exit}')"
 if [ "$GOT" != "$FPR" ]; then
   err "la huella de la clave NO coincide con la esperada — ABORTO."
   err "esperada: $FPR"; err "recibida: ${GOT:-<ninguna>}"; exit 1

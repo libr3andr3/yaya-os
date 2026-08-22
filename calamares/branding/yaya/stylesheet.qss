@@ -3,51 +3,107 @@
  * SPDX-License-Identifier: CC0-1.0
  *
  * Yaya OS dark theme — black canvas, silver (#cfd4da) ink.
+ *
+ * Every widget gets an explicit dark background: Calamares pages use plain
+ * Qt widgets whose native palette is light, so setting only the text colour
+ * (as the first version did) produced silver-on-white text in the content
+ * area, combo boxes, lists and the summary/partition pages.
  */
 
-#mainApp {
+* {
+    background-color: #000000;
+    color: #cfd4da;
+    selection-background-color: #cfd4da;
+    selection-color: #000000;
+}
+
+#mainApp, #sidebarApp, #logoApp, QMainWindow, QDialog, QScrollArea, QFrame,
+QWidget, QStackedWidget, QLabel, QGroupBox, QTabWidget::pane {
     background-color: #000000;
     color: #cfd4da;
 }
 
-#sidebarApp {
-    background-color: #000000;
+QScrollArea > QWidget > QWidget { background-color: #000000; }
+
+/* ---- Inputs ---------------------------------------------------------- */
+QLineEdit, QComboBox, QSpinBox, QPlainTextEdit, QTextEdit, QTextBrowser,
+QListView, QTreeView, QTableView, QListWidget, QTreeWidget, QTableWidget {
+    background-color: #0d1013;
     color: #cfd4da;
+    border: 1px solid #2a2f36;
+    border-radius: 4px;
+    padding: 3px 6px;
+    selection-background-color: #cfd4da;
+    selection-color: #000000;
 }
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus { border-color: #cfd4da; }
 
-#logoApp {
-    background-color: #000000;
-}
-
-/* Welcome-page action buttons */
-QPushButton#aboutButton,
-#donateButton,
-#supportButton,
-#releaseNotesButton,
-#knownIssuesButton {
+QComboBox::drop-down { border: none; background: transparent; width: 22px; }
+QComboBox QAbstractItemView {
+    background-color: #0d1013;
     color: #cfd4da;
+    border: 1px solid #2a2f36;
+    selection-background-color: #cfd4da;
+    selection-color: #000000;
 }
 
-/* Primary navigation buttons */
-QPushButton {
+QHeaderView::section {
+    background-color: #15181c;
+    color: #cfd4da;
+    border: 1px solid #2a2f36;
+    padding: 4px;
+}
+
+QCheckBox, QRadioButton { background: transparent; color: #cfd4da; spacing: 6px; }
+QCheckBox::indicator, QRadioButton::indicator {
+    width: 14px; height: 14px;
+    border: 1px solid #cfd4da;
+    background-color: #0d1013;
+}
+QRadioButton::indicator { border-radius: 7px; }
+QCheckBox::indicator:checked, QRadioButton::indicator:checked { background-color: #cfd4da; }
+
+QSlider::groove:horizontal { height: 4px; background: #2a2f36; border-radius: 2px; }
+QSlider::handle:horizontal { width: 14px; margin: -6px 0; background: #cfd4da; border-radius: 7px; }
+
+QProgressBar {
+    background-color: #0d1013;
+    color: #cfd4da;
+    border: 1px solid #2a2f36;
+    border-radius: 4px;
+    text-align: center;
+}
+QProgressBar::chunk { background-color: #cfd4da; }
+
+QTabBar::tab {
+    background-color: #15181c; color: #cfd4da;
+    border: 1px solid #2a2f36; padding: 6px 12px;
+}
+QTabBar::tab:selected { background-color: #cfd4da; color: #000000; }
+
+QToolTip { background-color: #15181c; color: #cfd4da; border: 1px solid #2a2f36; }
+QMenu { background-color: #0d1013; color: #cfd4da; border: 1px solid #2a2f36; }
+QMenu::item:selected { background-color: #cfd4da; color: #000000; }
+
+QScrollBar:vertical, QScrollBar:horizontal { background: #000000; border: none; width: 10px; height: 10px; }
+QScrollBar::handle { background: #2a2f36; border-radius: 5px; min-height: 20px; }
+QScrollBar::handle:hover { background: #cfd4da; }
+QScrollBar::add-line, QScrollBar::sub-line { height: 0; width: 0; }
+
+/* ---- Buttons --------------------------------------------------------- */
+QPushButton, QToolButton {
     background-color: #15181c;
     color: #cfd4da;
     border: 1px solid #2a2f36;
     border-radius: 4px;
     padding: 6px 14px;
 }
+QPushButton:hover, QToolButton:hover { background-color: #23282f; border-color: #cfd4da; }
+QPushButton:pressed, QPushButton:checked { background-color: #cfd4da; color: #000000; }
+QPushButton:disabled { color: #5b636c; border-color: #1c2025; background-color: #0d1013; }
 
-QPushButton:hover {
-    background-color: #23282f;
-    border-color: #cfd4da;
-}
+QPushButton#aboutButton, #donateButton, #supportButton,
+#releaseNotesButton, #knownIssuesButton { color: #cfd4da; }
 
-QPushButton:pressed {
-    background-color: #cfd4da;
-    color: #000000;
-}
-
-QPushButton:disabled {
-    color: #5b636c;
-    border-color: #1c2025;
-}
+/* ---- Requirements / status notices (keep them legible, not white) ---- */
+#requirementsList, #checkerWidget, #checkerWidget QLabel { background-color: #000000; }

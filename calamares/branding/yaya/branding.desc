@@ -30,7 +30,7 @@ strings:
     versionedName:       "Yaya OS 2.0 \"alien\""
     shortVersionedName:  "Yaya OS 2.0"
     bootloaderEntryName: "Yaya OS"
-    productUrl:          "https://yaya.sh"
+    productUrl:          "https://yaya.tech"
     supportUrl:          "https://yaya.cash"
     knownIssuesUrl:      ""
     releaseNotesUrl:     ""

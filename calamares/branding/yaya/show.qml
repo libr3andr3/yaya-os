@@ -78,7 +78,7 @@ Presentation
     Slide {
         Text {
             anchors.centerIn: parent
-            text: qsTr("Need a hand? yaya.sh · yaya.cash")
+            text: qsTr("Need a hand? yaya.tech · yaya.cash")
             color: "#cfd4da"
             font.pixelSize: 20
             horizontalAlignment: Text.Center
