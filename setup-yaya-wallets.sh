@@ -9,7 +9,7 @@ set -euo pipefail
 
 # ---- Versiones pinneadas (actualizar deliberadamente, no auto) ----
 ELECTRUM_VER="4.5.8"
-FEATHER_VER="2.7.0"
+FEATHER_VER="2.8.1"
 
 # ---- Nodos por defecto (infraestructura comunitaria Yaya) ----
 BTC_ELECTRUM_SERVER="electrum.yaya.cash:50002:s"   # Fulcrum/electrs con SSL
@@ -65,12 +65,12 @@ install_electrum() {
 # ---- Feather (best-effort) ----
 install_feather() {
   cd "$TMP" || return 1
-  curl -fsSLO "https://featherwallet.org/files/releases/linux/feather-${FEATHER_VER}-linux.AppImage"     || return 1
-  curl -fsSLO "https://featherwallet.org/files/releases/linux/feather-${FEATHER_VER}-linux.AppImage.asc" || return 1
+  curl -fsSLO "https://github.com/feather-wallet/feather/releases/download/${FEATHER_VER}/feather-${FEATHER_VER}.AppImage"     || return 1
+  curl -fsSLO "https://github.com/feather-wallet/feather/releases/download/${FEATHER_VER}/feather-${FEATHER_VER}.AppImage.asc" || return 1
   gpg --keyserver keyserver.ubuntu.com --recv-keys "$FEATHER_FPR" || return 1
-  verify_by "feather-${FEATHER_VER}-linux.AppImage.asc" "feather-${FEATHER_VER}-linux.AppImage" "$FEATHER_FPR" \
+  verify_by "feather-${FEATHER_VER}.AppImage.asc" "feather-${FEATHER_VER}.AppImage" "$FEATHER_FPR" \
     || { echo "   Feather: firma NO confiable -> no se instala"; return 1; }
-  install -Dm755 "feather-${FEATHER_VER}-linux.AppImage" /opt/feather/feather.AppImage || return 1
+  install -Dm755 "feather-${FEATHER_VER}.AppImage" /opt/feather/feather.AppImage || return 1
   cat > /usr/share/applications/feather.desktop <<'EOF'
 [Desktop Entry]
 Name=Feather (Monero)
