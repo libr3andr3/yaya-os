@@ -1,0 +1,66 @@
+# Yaya OS — "daily driver" app set for non-technical users.
+# Installed via live-build package list (config/package-lists/yaya-desktop.list.chroot).
+# Audit 2026-08-22: the base ISO had browser/notes/terminal only.
+
+# --- Office & documents ---
+libreoffice-writer
+libreoffice-calc
+libreoffice-impress
+libreoffice-gtk3
+libreoffice-l10n-es
+hunspell-en-us
+hunspell-es
+evince
+gedit
+gnome-calculator
+
+# --- Photos, video, music, camera ---
+eog
+shotwell
+vlc
+cheese
+gstreamer1.0-plugins-ugly
+gstreamer1.0-libav
+libavcodec-extra
+
+# --- Email ---
+thunderbird
+thunderbird-l10n-es-es
+
+# --- Printing & scanning ---
+cups
+cups-browsed
+ipp-usb
+system-config-printer
+printer-driver-gutenprint
+hplip
+simple-scan
+sane-airscan
+
+# --- Hardware / laptop ---
+pavucontrol
+power-profiles-daemon
+ntfs-3g
+exfatprogs
+gnome-disk-utility
+fwupd
+systemd-timesyncd
+
+# --- Software store & updates ---
+gnome-software
+gnome-software-plugin-flatpak
+flatpak
+unattended-upgrades
+
+# --- Fonts ---
+fonts-noto-core
+fonts-noto-color-emoji
+fonts-liberation2
+fonts-crosextra-carlito
+fonts-crosextra-caladea
+
+# --- System utilities ---
+gnome-system-monitor
+baobab
+unzip
+zip

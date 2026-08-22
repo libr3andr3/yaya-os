@@ -109,6 +109,9 @@ blueman
 dconf-cli
 EOF
 
+  echo "==> Apps de escritorio (LibreOffice, VLC, impresión, tienda...)"
+  cp "$KIT_DIR/yaya-desktop-apps.list" config/package-lists/yaya-desktop.list.chroot
+
   echo "==> Integrando hooks del kit (Cinnamon + wallets + branding + Calamares)"
   mkdir -p config/hooks/live
   # Escritorio Cinnamon + LightDM (reemplaza el antiguo XFCE/Win10).
@@ -122,6 +125,8 @@ EOF
   cp "$KIT_DIR/setup-yaya-fastfetch.sh"  config/hooks/live/0535-yaya-fastfetch.hook.chroot
   # Apps por defecto: Xournal++ (lápiz) + Brave
   cp "$KIT_DIR/setup-yaya-apps.sh"      config/hooks/live/0540-yaya-apps.hook.chroot
+  # Post-config de apps de escritorio (Flathub, unattended-upgrades, CUPS)
+  cp "$KIT_DIR/setup-yaya-desktop.sh"   config/hooks/live/0545-yaya-desktop.hook.chroot
   # Ajustes de sistema (dconf update, bluetooth, sudoers) — corre al final
   cp "$KIT_DIR/setup-yaya-system.sh"    config/hooks/live/0555-yaya-system.hook.chroot
   # Instalador gráfico Calamares — DE ÚLTIMO (necesita el resto ya instalado).
