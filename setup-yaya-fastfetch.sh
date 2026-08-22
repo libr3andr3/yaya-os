@@ -9,7 +9,7 @@
 #   · saludo fastfetch al abrir una terminal nueva (skel)
 #
 #   Uso manual:  sudo ./setup-yaya-fastfetch.sh
-#   En live-build: config/hooks/live/0530-yaya-fastfetch.hook.chroot
+#   En live-build: config/hooks/live/0535-yaya-fastfetch.hook.chroot
 # ============================================================
 set -euo pipefail
 

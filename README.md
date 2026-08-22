@@ -82,7 +82,7 @@ junto a la info del sistema, en el verde-teal de la marca (`38;5;79`).
   ffmpeg en la barra de estado. Los deps de streaming no van en la ISO
   base; el script indica cómo instalarlos si faltan.
 
-Hook live-build: `config/hooks/live/0530-yaya-fastfetch.hook.chroot`.
+Hook live-build: `config/hooks/live/0535-yaya-fastfetch.hook.chroot`.
 
 ## Táctil / pantallas táctiles
 

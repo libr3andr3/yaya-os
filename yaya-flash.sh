@@ -118,6 +118,8 @@ EOF
   cp "$KIT_DIR/setup-yaya-branding.sh"  config/hooks/live/0520-yaya-branding.hook.chroot
   # Soporte táctil (onboard solo aparece en hardware con pantalla táctil)
   cp "$KIT_DIR/setup-yaya-touch.sh"     config/hooks/live/0530-yaya-touch.hook.chroot
+  # Fastfetch con marca (alien en la terminal, config global, saludo)
+  cp "$KIT_DIR/setup-yaya-fastfetch.sh"  config/hooks/live/0535-yaya-fastfetch.hook.chroot
   # Apps por defecto: Xournal++ (lápiz) + Brave
   cp "$KIT_DIR/setup-yaya-apps.sh"      config/hooks/live/0540-yaya-apps.hook.chroot
   # Ajustes de sistema (dconf update, bluetooth, sudoers) — corre al final
@@ -129,6 +131,8 @@ EOF
   echo "==> Copiando assets de marca al chroot (/usr/share/yaya/branding)"
   mkdir -p config/includes.chroot/usr/share/yaya/branding
   cp -r "$KIT_DIR/branding/." config/includes.chroot/usr/share/yaya/branding/
+  mkdir -p config/includes.chroot/usr/share/yaya/fastfetch-src
+  cp -r "$KIT_DIR/fastfetch/." config/includes.chroot/usr/share/yaya/fastfetch-src/
 
   echo "==> Copiando kit Calamares al chroot (/usr/share/yaya/calamares)"
   mkdir -p config/includes.chroot/usr/share/yaya/calamares
