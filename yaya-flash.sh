@@ -123,7 +123,7 @@ EOF
   cp "$KIT_DIR/setup-yaya-touch.sh"     config/hooks/live/0530-yaya-touch.hook.chroot
   # Fastfetch con marca (alien en la terminal, config global, saludo)
   cp "$KIT_DIR/setup-yaya-fastfetch.sh"  config/hooks/live/0535-yaya-fastfetch.hook.chroot
-  # Apps por defecto: Xournal++ (lápiz) + Brave
+  # Apps por defecto: Xournal++ (lápiz) + Firefox ESR con uBlock Origin
   cp "$KIT_DIR/setup-yaya-apps.sh"      config/hooks/live/0540-yaya-apps.hook.chroot
   # Post-config de apps de escritorio (Flathub, unattended-upgrades, CUPS)
   cp "$KIT_DIR/setup-yaya-desktop.sh"   config/hooks/live/0545-yaya-desktop.hook.chroot
