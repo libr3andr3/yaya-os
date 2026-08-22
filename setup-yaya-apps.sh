@@ -36,11 +36,7 @@ cat > /etc/firefox-esr/policies/policies.json <<'JSON'
     "OverrideFirstRunPage": "",
     "OverridePostUpdatePage": "",
     "NoDefaultBookmarks": true,
-    "Homepage": { "URL": "https://yaya.tech", "StartPage": "homepage" },
-    "ExtensionSettings": {
-      "uBlock0@raymondhill.net": { "installation_mode": "normal_installed",
-        "install_url": "file:///usr/share/webext/ublock-origin/" }
-    }
+    "Homepage": { "URL": "https://yaya.tech", "StartPage": "homepage" }
   }
 }
 JSON
