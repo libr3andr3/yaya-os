@@ -138,6 +138,7 @@ EOF
   echo "==> Copiando kit Calamares al chroot (/usr/share/yaya/calamares)"
   mkdir -p config/includes.chroot/usr/share/yaya/calamares
   cp "$KIT_DIR/calamares/settings.conf" config/includes.chroot/usr/share/yaya/calamares/
+  cp "$KIT_DIR/calamares/yaya-install"  config/includes.chroot/usr/share/yaya/calamares/
   cp -r "$KIT_DIR/calamares/modules"    config/includes.chroot/usr/share/yaya/calamares/
   cp -r "$KIT_DIR/calamares/branding"   config/includes.chroot/usr/share/yaya/calamares/
 

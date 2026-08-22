@@ -30,7 +30,9 @@ apt-get install -y \
   calamares \
   squashfs-tools rsync \
   dosfstools e2fsprogs cryptsetup lvm2 \
-  grub-pc-bin grub-efi-amd64-bin efibootmgr \
+  grub-pc-bin grub-efi-amd64-bin grub2-common efibootmgr \
+  grub-efi-amd64-signed shim-signed \
+  zenity network-manager \
   qml-module-qtquick2 qml-module-qtquick-window2 \
   qml-module-qtquick-layouts qml-module-qtquick-controls2
 # Render temporal SVG->PNG (se purga al final). Preferimos rsvg-convert;
@@ -64,7 +66,11 @@ render "$ART/yaya-logo-full.svg" 512 "" "$BR/yaya-welcome.png"
 apt-get purge -y librsvg2-bin 2>/dev/null || true
 apt-get autoremove -y || true
 
-echo "==> [4/5] Lanzador 'Install Yaya OS' (menú, escritorio, autostart)"
+echo "==> [4/5] Lanzador 'Install Yaya OS' (Wi-Fi + Calamares; menú, escritorio, autostart)"
+# Wrapper: ofrece Wi-Fi antes del instalador (la conexión pasa al sistema
+# instalado vía el módulo networkcfg), luego pkexec calamares.
+if   [ -f "$SRC/yaya-install" ]; then install -m755 "$SRC/yaya-install" /usr/bin/yaya-install
+else echo "ERROR: falta $SRC/yaya-install"; exit 1; fi
 cat > /usr/share/applications/yaya-install.desktop <<'EOF'
 [Desktop Entry]
 Type=Application
@@ -72,7 +78,7 @@ Version=1.0
 Name=Install Yaya OS
 GenericName=System Installer
 Comment=Install Yaya OS to this computer
-Exec=pkexec calamares
+Exec=yaya-install
 Icon=yaya-logo
 Terminal=false
 StartupNotify=true
@@ -103,5 +109,17 @@ polkit.addRule(function(action, subject) {
     }
 });
 EOF
+
+# NetworkManager: el usuario live (y cualquier sesión local activa) puede
+# crear/modificar conexiones sin contraseña. Sin esto nm-applet falla con
+# "connection failed" ANTES de pedir la clave Wi-Fi.
+cat > /etc/polkit-1/rules.d/48-yaya-networkmanager.rules <<'PKEOF'
+polkit.addRule(function(action, subject) {
+    if (action.id.indexOf("org.freedesktop.NetworkManager.") == 0 &&
+        subject.local && subject.active) {
+        return polkit.Result.YES;
+    }
+});
+PKEOF
 
 echo "==> Calamares (Yaya OS) listo."

@@ -1,0 +1,58 @@
+#!/bin/bash
+# ============================================================
+# Yaya OS — lanzador del instalador
+#   1) Si no hay internet, ofrece conectar a Wi-Fi (zenity + nmcli).
+#      La conexión pasa al sistema instalado (módulo networkcfg).
+#   2) Lanza Calamares (pkexec, sin contraseña en la sesión live).
+# ============================================================
+export LC_ALL=C.UTF-8
+T="Yaya OS — Wi-Fi"
+online() { [ "$(nmcli -t -g CONNECTIVITY general 2>/dev/null)" = "full" ]; }
+wifi_dev() { nmcli -t -f DEVICE,TYPE dev status 2>/dev/null | awk -F: '$2=="wifi"{print $1; exit}'; }
+
+wifi_setup() {
+  local dev; dev="$(wifi_dev)"
+  [ -n "$dev" ] || return 0                       # sin tarjeta Wi-Fi: nada que hacer
+  nmcli radio wifi on 2>/dev/null
+  while ! online; do
+    nmcli dev wifi rescan ifname "$dev" 2>/dev/null; sleep 2
+    # SSID:SIGNAL:SECURITY (dedupe por SSID, mejor señal primero; ':' escapado -> \x01)
+    local rows; rows="$(nmcli -t -f SSID,SIGNAL,SECURITY dev wifi list ifname "$dev" 2>/dev/null \
+      | sed 's/\\:/\x01/g' | awk -F: '$1!="" && !seen[$1]++' | sort -t: -k2,2nr | tr '\x01' ':')"
+    local args=()
+    while IFS=: read -r ssid sig sec; do
+      [ -n "$ssid" ] && args+=("$ssid" "${sig}%" "${sec:-open}")
+    done <<< "$rows"
+    args+=("(hidden network…)" "" "")
+    local choice
+    choice="$(zenity --list --title="$T" --width=520 --height=420 \
+      --text="Connect to the internet before installing (recommended).\nEthernet is detected automatically — this is only for Wi-Fi." \
+      --column="Network" --column="Signal" --column="Security" "${args[@]}" \
+      --ok-label="Connect" --cancel-label="Skip" --print-column=1)" || return 0
+    [ -n "$choice" ] || continue
+    local hidden=""
+    if [ "$choice" = "(hidden network…)" ]; then
+      choice="$(zenity --entry --title="$T" --text="Network name (SSID):")" || continue
+      [ -n "$choice" ] || continue; hidden="hidden yes"
+    fi
+    local sec; sec="$(printf '%s\n' "$rows" | awk -F: -v s="$choice" '$1==s{print $3; exit}')"
+    local pw="" pwarg=()
+    if [ -n "$hidden" ] || [ -n "$sec" ]; then
+      pw="$(zenity --password --title="$T — $choice")" || continue
+      [ -n "$pw" ] && pwarg=(password "$pw")
+    fi
+    nmcli con delete id "$choice" >/dev/null 2>&1
+    local out
+    if out="$(nmcli -w 30 dev wifi connect "$choice" "${pwarg[@]}" ifname "$dev" $hidden 2>&1)"; then
+      for _ in 1 2 3 4 5 6 7 8 9 10; do online && break; sleep 1; done
+      online && { zenity --info --title="$T" --text="Connected to <b>$choice</b>." --timeout=3; break; }
+      zenity --warning --title="$T" --text="Associated with <b>$choice</b> but no internet yet.\nYou can continue anyway."
+      break
+    else
+      zenity --error --title="$T" --text="Could not connect to <b>$choice</b>:\n\n<tt>$out</tt>"
+    fi
+  done
+}
+
+online || wifi_setup
+exec pkexec calamares "$@"
