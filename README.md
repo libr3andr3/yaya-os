@@ -1,4 +1,12 @@
-# Yaya OS — XFCE Windows 10 Kit
+# Yaya OS
+
+> **2026-08-22:** escritorio = **KDE Plasma 6 (Wayland) + SDDM + tema Fluent Round**
+> (`setup-yaya-plasma.sh`). Cinnamon/XFCE quedan como referencia histórica.
+> Apps KDE (Dolphin, Okular, Gwenview, Kate, Discover…) + LibreOffice, Firefox+uBlock,
+> VLC, Thunderbird, CUPS. `fastfetch` se ejecuta sólo al escribirlo y renderiza el
+> alien al tamaño de la terminal.
+
+# (histórico) Yaya OS — XFCE Windows 10 Kit
 
 XFCE configurado para verse y comportarse como Windows 10, con **identidad
 de marca Yaya completa** (arranque, greeter, wallpaper, os-release).

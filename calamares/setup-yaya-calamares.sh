@@ -32,7 +32,7 @@ apt-get install -y \
   dosfstools e2fsprogs cryptsetup lvm2 \
   grub-pc-bin grub-efi-amd64-bin grub2-common efibootmgr \
   grub-efi-amd64-signed shim-signed \
-  zenity network-manager \
+  zenity network-manager x11-xserver-utils \
   qml-module-qtquick2 qml-module-qtquick-window2 \
   qml-module-qtquick-layouts qml-module-qtquick-controls2
 # Render temporal SVG->PNG (se purga al final). Preferimos rsvg-convert;
@@ -103,8 +103,9 @@ cat > /etc/polkit-1/rules.d/49-yaya-calamares.rules <<'EOF'
 /* Live session runs as an unprivileged user; allow launching the
    installer via pkexec without a password prompt. */
 polkit.addRule(function(action, subject) {
-    if (action.id == "org.freedesktop.policykit.exec" &&
-        action.lookup("program") == "/usr/bin/calamares") {
+    if ((action.id == "com.github.calamares.calamares.pkexec.run" ||
+         action.id == "org.freedesktop.policykit.exec") &&
+        subject.user == "live" && subject.local && subject.active) {
         return polkit.Result.YES;
     }
 });

@@ -55,4 +55,7 @@ wifi_setup() {
 }
 
 online || wifi_setup
-exec pkexec calamares "$@"
+# Root + Qt bajo Wayland: Calamares va por Xwayland (xcb); autorizamos root en X.
+xhost +SI:localuser:root >/dev/null 2>&1 || true
+exec pkexec env DISPLAY="${DISPLAY:-:0}" XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}" \
+  QT_QPA_PLATFORM=xcb XDG_RUNTIME_DIR=/run/user/0 calamares "$@"

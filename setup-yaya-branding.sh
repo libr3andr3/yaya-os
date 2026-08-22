@@ -171,23 +171,14 @@ update-initramfs -u 2>/dev/null || true
 # que el preseed corre CON `in-target` cuando grub YA está instalado en el disco.
 
 # --- Post-instalación: se ejecuta en el sistema INSTALADO (in-target) ---
-#   · autologin del usuario  · grub silencioso + timeout + magenta
+#   · grub silencioso + timeout + magenta  · apt sin medio live
 # No se aplica al Live (allí manda live-config con el usuario 'user').
 cat > /usr/local/sbin/yaya-postinstall <<'PI'
 #!/bin/sh
 set -e
 USR="${1:-yaya}"
 
-# 1) Autologin del usuario creado
-install -d /etc/lightdm/lightdm.conf.d
-cat > /etc/lightdm/lightdm.conf.d/20-yaya-autologin.conf <<EOF
-[Seat:*]
-autologin-user=$USR
-autologin-user-timeout=0
-autologin-session=cinnamon
-EOF
-groupadd -f autologin 2>/dev/null || true
-usermod -aG autologin "$USR" 2>/dev/null || true
+# 1) (sin autologin: SDDM preselecciona al usuario creado)
 
 # 2) GRUB instalado: arranque silencioso (sin verbose) + timeout corto
 if [ -f /etc/default/grub ]; then
@@ -220,7 +211,7 @@ apt-get purge -y librsvg2-bin >/dev/null 2>&1 || true
 apt-get autoremove -y >/dev/null 2>&1 || true
 
 echo ""
-echo "Branding de arranque aplicado (XFCE intacto):"
+echo "Branding de arranque aplicado (escritorio intacto):"
 echo "  Identidad : ${OS_NAME} ${OS_VERSION} (${OS_CODENAME})"
 echo "  Splash    : Plymouth 'yaya' — lockup Yaya Tech centrado sobre negro"
 echo "  Logo SO   : alien (icono distributor-logo / start-here)"

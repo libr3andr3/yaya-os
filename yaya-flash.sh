@@ -105,17 +105,15 @@ sudo
 locales
 bluez
 bluez-firmware
-blueman
-dconf-cli
 EOF
 
   echo "==> Apps de escritorio (LibreOffice, VLC, impresión, tienda...)"
   cp "$KIT_DIR/yaya-desktop-apps.list" config/package-lists/yaya-desktop.list.chroot
 
-  echo "==> Integrando hooks del kit (Cinnamon + branding + apps + Calamares)"
+  echo "==> Integrando hooks del kit (Plasma + branding + apps + Calamares)"
   mkdir -p config/hooks/live
-  # Escritorio Cinnamon + LightDM (reemplaza el antiguo XFCE/Win10).
-  cp "$KIT_DIR/setup-yaya-cinnamon.sh"  config/hooks/live/0500-yaya-cinnamon.hook.chroot
+  # Escritorio KDE Plasma 6 + SDDM + Fluent Round (reemplaza a Cinnamon).
+  cp "$KIT_DIR/setup-yaya-plasma.sh"    config/hooks/live/0500-yaya-plasma.hook.chroot
   # Wallets (Electrum/Feather -> nodos yaya.cash): DESACTIVADO hasta que la
   # infraestructura esté lista. Reactivar descomentando:
   # cp "$KIT_DIR/setup-yaya-wallets.sh"   config/hooks/live/0510-yaya-wallets.hook.chroot
