@@ -30,7 +30,7 @@ apt-get install -y --no-install-recommends \
   plasma-discover plasma-discover-backend-flatpak \
   pipewire-audio pipewire-pulse wireplumber libspa-0.2-bluetooth \
   xdg-user-dirs fonts-open-sans fonts-noto-core \
-  git
+  git sassc
 
 echo "==> [2/6] SDDM: Fluent, recordar usuario, Wayland por defecto"
 echo "/usr/bin/sddm" > /etc/X11/default-display-manager
@@ -77,8 +77,9 @@ cp -r "$FH"/.config/Kvantum/.                   /usr/share/Kvantum/             
 # Iconos (Fluent, Fluent-dark, Fluent-light)
 ( cd "$SRC/icons" && bash ./install.sh -d /usr/share/icons >/dev/null ) || echo "   WARN: iconos Fluent no instalados"
 # GTK (para Firefox, LibreOffice, Thunderbird...)
-( cd "$SRC/gtk" && bash ./install.sh -d /usr/share/themes -c dark --tweaks round >/dev/null ) \
-  || ( cd "$SRC/gtk" && bash ./install.sh -d /usr/share/themes -c dark >/dev/null ) \
+# (sassc ya instalado: el installer lo pediría con un apt-get interactivo y se colgaría)
+( cd "$SRC/gtk" && bash ./install.sh -d /usr/share/themes -c dark --tweaks round </dev/null >/dev/null ) \
+  || ( cd "$SRC/gtk" && bash ./install.sh -d /usr/share/themes -c dark </dev/null >/dev/null ) \
   || echo "   WARN: tema GTK Fluent no instalado"
 rm -rf "$FH" "$SRC"
 
@@ -189,7 +190,7 @@ NoDisplay=true
 EOF
 
 echo "==> [6/6] Limpieza"
-apt-get purge -y git >/dev/null 2>&1 || true
+apt-get purge -y git sassc >/dev/null 2>&1 || true
 apt-get autoremove -y >/dev/null 2>&1 || true
 echo "Plasma + Fluent Round listo:"
 cat /usr/share/yaya/theme/ids | sed 's/^/   /'
