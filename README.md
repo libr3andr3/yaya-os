@@ -122,7 +122,10 @@ el hook — build reproducible y sin dependencia de red externa.
 - Botones de ventana a la derecha (min/max/cerrar), snap al arrastrar a bordes
 - Tema GTK "Windows-10" y set de iconos "Windows-10" de B00merang (GPL)
 
-## Wallets (setup-yaya-wallets.sh)
+## Wallets (setup-yaya-wallets.sh) — NO incluido en la ISO por ahora
+
+> Desactivado en `yaya-flash.sh` (2026-08-22) hasta que los nodos de yaya.cash
+> estén listos. El hook sigue en el repo; reactivar descomentando la línea `0510`.
 
 Bitcoin y Monero preinstalados, apuntando a infraestructura Yaya por defecto:
 
