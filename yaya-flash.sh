@@ -133,6 +133,7 @@ EOF
   cp -r "$KIT_DIR/branding/." config/includes.chroot/usr/share/yaya/branding/
   mkdir -p config/includes.chroot/usr/share/yaya/fastfetch-src
   cp -r "$KIT_DIR/fastfetch/." config/includes.chroot/usr/share/yaya/fastfetch-src/
+  cp "$KIT_DIR/yaya-webcam.sh" config/includes.chroot/usr/share/yaya/fastfetch-src/
 
   echo "==> Copiando kit Calamares al chroot (/usr/share/yaya/calamares)"
   mkdir -p config/includes.chroot/usr/share/yaya/calamares

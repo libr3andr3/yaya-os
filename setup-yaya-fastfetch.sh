@@ -39,9 +39,9 @@ install -m644 "$SRC"/webcam.jsonc "$SRC"/webcam-compact.jsonc \
               "$SRC"/yaya-logo.txt "$SRC"/yaya-logo-small.txt "$SHARE/"
 install -m755 "$SRC/yaya-logo-gen.py" "$SHARE/"
 # PNG fuente para el generador — el mismo alien que el icono del SO.
-if [ -f "$SELF_DIR/branding/yaya-logo.png" ]; then
-  install -m644 "$SELF_DIR/branding/yaya-logo.png" "$SHARE/yaya-logo.png"
-fi
+for png in "$SELF_DIR/branding/yaya-logo.png" /usr/share/yaya/branding/yaya-logo.png; do
+  [ -f "$png" ] && { install -m644 "$png" "$SHARE/yaya-logo.png"; break; }
+done
 
 echo "==> [3/5] Config global -> /etc/fastfetch/config.jsonc"
 install -Dm644 "$SRC/config.jsonc" /etc/fastfetch/config.jsonc
@@ -49,7 +49,10 @@ install -Dm644 "$SRC/config.jsonc" /etc/fastfetch/config.jsonc
 echo "==> [4/5] yaya-webcam -> /usr/bin"
 # Los deps de streaming (gphoto2, ffmpeg, v4l2loopback-dkms) NO van en la
 # ISO base — el propio yaya-webcam indica cómo instalarlos si faltan.
-install -Dm755 "$SELF_DIR/yaya-webcam.sh" /usr/bin/yaya-webcam
+# En el chroot el script vive junto a los assets (fastfetch-src/), no junto al hook.
+WEBCAM="$SELF_DIR/yaya-webcam.sh"; [ -f "$WEBCAM" ] || WEBCAM="$SRC/yaya-webcam.sh"
+if [ -f "$WEBCAM" ]; then install -Dm755 "$WEBCAM" /usr/bin/yaya-webcam
+else echo "   WARN: yaya-webcam.sh no encontrado; omitido"; fi
 
 echo "==> [5/5] Saludo fastfetch en terminales nuevas (skel)"
 install -d /etc/skel
