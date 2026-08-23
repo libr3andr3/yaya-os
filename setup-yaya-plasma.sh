@@ -128,9 +128,6 @@ if [ -d "$SDDMT" ]; then
   cp "$BR/yaya-logo-white.svg" "$SDDMT/yaya-logo.svg"
   grep -q '^showlogo=' "$SDDMT/theme.conf.user" 2>/dev/null || printf '[General]\nshowlogo=shown\nlogo=yaya-logo.svg\n' >> "$SDDMT/theme.conf.user"
 fi
-# referencia: el icono de inicio se fija en el layout del look-and-feel y en yaya-apply-theme
-icon=$BR/yaya-logo-white.svg
-EOF
 
 echo "==> [4/6] Defaults del sistema (/etc/xdg) para usuarios nuevos"
 install -d /etc/xdg/Kvantum /etc/gtk-3.0 /etc/gtk-4.0
