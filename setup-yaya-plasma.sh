@@ -104,6 +104,60 @@ LNFDIR=/usr/share/plasma/look-and-feel/$LNF
 sed 's/#cfd4da/#ffffff/gI' "$BR/yaya-logo.svg" > "$BR/yaya-logo-white.svg"
 # Splash de arranque de Plasma: el logo "Windows" de Fluent -> alien
 [ -f "$LNFDIR/contents/splash/images/kde.svg" ] && cp "$BR/yaya-logo-white.svg" "$LNFDIR/contents/splash/images/kde.svg"
+# Splash.qml propio: alien a tamaño fijo y la barra de progreso DEBAJO (no encima)
+cat > "$LNFDIR/contents/splash/Splash.qml" <<'QML'
+import QtQuick 2.1
+
+Image {
+    id: root
+    source: "images/background.png"
+    property int stage
+    onStageChanged: { if (stage == 1) introAnimation.running = true }
+
+    Item {
+        id: card
+        width: 360; height: 260
+        anchors.horizontalCenter: parent.horizontalCenter
+        y: root.height
+
+        Image {
+            id: logo
+            source: "images/kde.svg"
+            width: 150; height: 150
+            sourceSize.width: 300; sourceSize.height: 300
+            fillMode: Image.PreserveAspectFit
+            smooth: true
+            anchors { top: parent.top; horizontalCenter: parent.horizontalCenter }
+        }
+        Rectangle {
+            id: track
+            radius: 3
+            color: "#3d70abf2"
+            anchors { top: logo.bottom; topMargin: 36; horizontalCenter: parent.horizontalCenter }
+            height: 4
+            width: 200
+            Rectangle {
+                radius: 3
+                anchors { left: parent.left; top: parent.top; bottom: parent.bottom }
+                width: (parent.width / 6) * (stage - 1)
+                color: "#ffffff"
+                Behavior on width { PropertyAnimation { duration: 250; easing.type: Easing.InOutQuad } }
+            }
+        }
+    }
+
+    SequentialAnimation {
+        id: introAnimation
+        running: false
+        PropertyAnimation {
+            property: "y"; target: card
+            to: root.height / 2 - card.height / 2
+            duration: 900
+            easing.type: Easing.InOutBack; easing.overshoot: 1.0
+        }
+    }
+}
+QML
 # Plasmoids de la era Plasma 5 que Fluent instala y fallan en Plasma 6
 rm -rf /usr/share/plasma/plasmoids/org.kde.plasma.splitdigitalclock \
        /usr/share/plasma/plasmoids/org.kde.plasma.win7showdesktop
@@ -226,23 +280,40 @@ chmod +x /usr/local/bin/yaya-apply-theme
 # Cada login: touchpad con scroll natural + tap-to-click (KWin lo persiste en kcminputrc)
 cat > /usr/local/bin/yaya-input-defaults <<'EOF'
 #!/bin/sh
-# Scroll natural y tap-to-click en todos los touchpads (Plasma Wayland/X11 via KWin DBus).
-# Se aplica en cada login; KWin guarda el valor por dispositivo en kcminputrc.
-CFG="${XDG_CONFIG_HOME:-$HOME/.config}"; FLAG="$CFG/yaya-input-applied"
-sleep 3
-for i in 1 2 3 4 5; do
+# Scroll natural + tap-to-click en todos los touchpads. Dos vías, ambas
+# persistentes en ~/.config/kcminputrc (formato de KWin):
+#   1) kwriteconfig6 [Libinput][vendor][product][name] desde /sys + udev
+#      (no depende de que KWin esté listo; KWin relee kcminputrc solo)
+#   2) propiedades DBus de KWin (aplican al instante en la sesión actual)
+# Registro en ~/.cache/yaya-input.log para diagnóstico.
+LOG="${XDG_CACHE_HOME:-$HOME/.cache}/yaya-input.log"; mkdir -p "$(dirname "$LOG")"
+{ echo "== $(date) =="
+for ev in /sys/class/input/event*; do
+  dev="/dev/input/$(basename "$ev")"
+  udevadm info -q property "$dev" 2>/dev/null | grep -q '^ID_INPUT_TOUCHPAD=1' || continue
+  name="$(cat "$ev/device/name" 2>/dev/null)"
+  vid=$((16#$(cat "$ev/device/id/vendor" 2>/dev/null || echo 0)))
+  pid=$((16#$(cat "$ev/device/id/product" 2>/dev/null || echo 0)))
+  echo "touchpad: $dev '$name' vendor=$vid product=$pid"
+  for kv in "NaturalScroll true" "TapToClick true" "ScrollTwoFinger true"; do
+    kwriteconfig6 --file kcminputrc --group Libinput --group "$vid" --group "$pid" --group "$name" \
+      --key "${kv%% *}" --type bool "${kv##* }" && echo "  kcminputrc ${kv%% *}=${kv##* }"
+  done
+done
+# 2) DBus (sesión actual)
+for i in 1 2 3 4 5 6; do
   devs="$(qdbus6 org.kde.KWin /org/kde/KWin/InputDevice org.kde.KWin.InputDeviceManager.devicesSysNames 2>/dev/null)"
   [ -n "$devs" ] && break; sleep 2
 done
 for d in $devs; do
   P="/org/kde/KWin/InputDevice/$d"
   [ "$(qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.touchpad 2>/dev/null)" = "true" ] || continue
-  [ -e "$FLAG" ] && [ "$(qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.naturalScroll 2>/dev/null)" = "true" ] && continue
-  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.naturalScroll true >/dev/null 2>&1
-  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.tapToClick true >/dev/null 2>&1
-  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.scrollMethod 1 >/dev/null 2>&1   # 1 = dos dedos
+  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.naturalScroll true 2>&1 && echo "dbus $d naturalScroll=true"
+  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.tapToClick true 2>&1 && echo "dbus $d tapToClick=true"
+  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.scrollTwoFinger true >/dev/null 2>&1 || true
 done
-touch "$FLAG"
+qdbus6 org.kde.KWin /KWin org.kde.KWin.reconfigure >/dev/null 2>&1 || true
+} >> "$LOG" 2>&1
 EOF
 chmod +x /usr/local/bin/yaya-input-defaults
 cat > /etc/xdg/autostart/yaya-input-defaults.desktop <<'EOF'
