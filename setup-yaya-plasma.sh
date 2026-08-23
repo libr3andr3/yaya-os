@@ -97,6 +97,41 @@ printf 'LNF=%s\nDSK=%s\nAUR=%s\nKVT=%s\nICO=%s\nGTK=%s\nCOL=%s\n' "$LNF" "$DSK" 
   | tee /usr/share/yaya/theme/ids
 [ -n "$LNF" ] || { echo "ERROR: no se instaló el look-and-feel Fluent round"; exit 1; }
 
+echo "==> [3b/6] Toque Yaya sobre Fluent: alien blanco, reloj estándar, panel auto-hide"
+BR=/usr/share/yaya/branding
+LNFDIR=/usr/share/plasma/look-and-feel/$LNF
+# Alien en blanco (el SVG de marca viene en plata #cfd4da)
+sed 's/#cfd4da/#ffffff/gI' "$BR/yaya-logo.svg" > "$BR/yaya-logo-white.svg"
+# Splash de arranque de Plasma: el logo "Windows" de Fluent -> alien
+[ -f "$LNFDIR/contents/splash/images/kde.svg" ] && cp "$BR/yaya-logo-white.svg" "$LNFDIR/contents/splash/images/kde.svg"
+# Plasmoids de la era Plasma 5 que Fluent instala y fallan en Plasma 6
+rm -rf /usr/share/plasma/plasmoids/org.kde.plasma.splitdigitalclock \
+       /usr/share/plasma/plasmoids/org.kde.plasma.win7showdesktop
+# Layout del panel: reloj estándar, show-desktop estándar, auto-hide,
+# lanzadores nuestros, icono de inicio = alien.
+python3 - "$LNFDIR/contents/layouts/org.kde.plasma.desktop-layout.js" <<'PY'
+import re, sys
+p = sys.argv[1]; s = open(p).read()
+s = s.replace('"plugin": "org.kde.plasma.splitdigitalclock"', '"plugin": "org.kde.plasma.digitalclock"')
+s = s.replace('"plugin": "org.kde.plasma.win7showdesktop"', '"plugin": "org.kde.plasma.showdesktop"')
+s = s.replace('"hiding": "normal"', '"hiding": "autohide"')
+s = re.sub(r'"launchers": "[^"]*"',
+           '"launchers": "applications:firefox-esr.desktop,applications:org.kde.dolphin.desktop,applications:org.kde.konsole.desktop,applications:systemsettings.desktop"', s)
+s = s.replace('"favoritesPortedToKAstats": "true",',
+              '"favoritesPortedToKAstats": "true",\n                            "icon": "/usr/share/yaya/branding/yaya-logo-white.svg",', 1)
+open(p, 'w').write(s)
+print("   layout: reloj/showdesktop estándar, autohide, lanzadores Yaya, icono alien")
+PY
+# SDDM: alien como logo del login (si el tema lo soporta)
+SDDMT=/usr/share/sddm/themes/Fluent
+if [ -d "$SDDMT" ]; then
+  cp "$BR/yaya-logo-white.svg" "$SDDMT/yaya-logo.svg"
+  grep -q '^showlogo=' "$SDDMT/theme.conf.user" 2>/dev/null || printf '[General]\nshowlogo=shown\nlogo=yaya-logo.svg\n' >> "$SDDMT/theme.conf.user"
+fi
+# referencia: el icono de inicio se fija en el layout del look-and-feel y en yaya-apply-theme
+icon=$BR/yaya-logo-white.svg
+EOF
+
 echo "==> [4/6] Defaults del sistema (/etc/xdg) para usuarios nuevos"
 install -d /etc/xdg/Kvantum /etc/gtk-3.0 /etc/gtk-4.0
 cat > /etc/xdg/kdeglobals <<EOF
@@ -175,7 +210,52 @@ kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key library org.kde.k
 kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key theme "__aurorae__svg__$AUR"
 mkdir -p "$CFG/Kvantum"; printf '[General]\ntheme=%s\n' "$KVT" > "$CFG/Kvantum/kvantum.kvconfig"
 qdbus6 org.kde.KWin /KWin reconfigure >/dev/null 2>&1 || true
+sleep 4
+qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+  panels().forEach(function(p){
+    p.hiding = "autohide";
+    p.widgetIds.forEach(function(id){
+      var w = p.widgetById(id);
+      if (w && w.type == "org.kde.plasma.kickoff") {
+        w.currentConfigGroup = ["General"];
+        w.writeConfig("icon", "/usr/share/yaya/branding/yaya-logo-white.svg");
+      }
+    });
+  });' >/dev/null 2>&1 || true
 touch "$FLAG"
+EOF
+chmod +x /usr/local/bin/yaya-apply-theme
+
+# Cada login: touchpad con scroll natural + tap-to-click (KWin lo persiste en kcminputrc)
+cat > /usr/local/bin/yaya-input-defaults <<'EOF'
+#!/bin/sh
+# Scroll natural y tap-to-click en todos los touchpads (Plasma Wayland/X11 via KWin DBus).
+# Se aplica en cada login; KWin guarda el valor por dispositivo en kcminputrc.
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}"; FLAG="$CFG/yaya-input-applied"
+sleep 3
+for i in 1 2 3 4 5; do
+  devs="$(qdbus6 org.kde.KWin /org/kde/KWin/InputDevice org.kde.KWin.InputDeviceManager.devicesSysNames 2>/dev/null)"
+  [ -n "$devs" ] && break; sleep 2
+done
+for d in $devs; do
+  P="/org/kde/KWin/InputDevice/$d"
+  [ "$(qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.touchpad 2>/dev/null)" = "true" ] || continue
+  [ -e "$FLAG" ] && [ "$(qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.naturalScroll 2>/dev/null)" = "true" ] && continue
+  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.naturalScroll true >/dev/null 2>&1
+  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.tapToClick true >/dev/null 2>&1
+  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.scrollMethod 1 >/dev/null 2>&1   # 1 = dos dedos
+done
+touch "$FLAG"
+EOF
+chmod +x /usr/local/bin/yaya-input-defaults
+cat > /etc/xdg/autostart/yaya-input-defaults.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Yaya input defaults (natural scroll)
+Exec=/usr/local/bin/yaya-input-defaults
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2
+NoDisplay=true
 EOF
 chmod +x /usr/local/bin/yaya-apply-theme
 install -d /etc/xdg/autostart
