@@ -224,9 +224,17 @@ cat > /etc/xdg/kwalletrc <<'EOF'
 Enabled=false
 First Use=false
 EOF
+# Touchpad por defecto para TODOS los dispositivos (canal propio de KWin:
+# grupo [Libinput][Defaults][Touchpad], leído antes de inicializar el hardware).
 cat > /etc/xdg/kcminputrc <<'EOF'
 [Mouse]
 cursorTheme=breeze_cursors
+
+[Libinput][Defaults][Touchpad]
+NaturalScroll=true
+TapToClick=true
+ScrollTwoFinger=true
+DisableWhileTyping=true
 EOF
 cat > /etc/gtk-3.0/settings.ini <<EOF
 [Settings]
@@ -276,66 +284,6 @@ qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
 touch "$FLAG"
 EOF
 chmod +x /usr/local/bin/yaya-apply-theme
-
-# Cada login: touchpad con scroll natural + tap-to-click (KWin lo persiste en kcminputrc)
-cat > /usr/local/bin/yaya-input-defaults <<'EOF'
-#!/bin/sh
-# Scroll natural + tap-to-click en todos los touchpads. Dos vías, ambas
-# persistentes en ~/.config/kcminputrc (formato de KWin):
-#   1) kwriteconfig6 [Libinput][vendor][product][name] desde /sys + udev
-#      (no depende de que KWin esté listo; KWin relee kcminputrc solo)
-#   2) propiedades DBus de KWin (aplican al instante en la sesión actual)
-# Registro en ~/.cache/yaya-input.log para diagnóstico.
-LOG="${XDG_CACHE_HOME:-$HOME/.cache}/yaya-input.log"; mkdir -p "$(dirname "$LOG")"
-{ echo "== $(date) =="
-for ev in /sys/class/input/event*; do
-  dev="/dev/input/$(basename "$ev")"
-  udevadm info -q property "$dev" 2>/dev/null | grep -q '^ID_INPUT_TOUCHPAD=1' || continue
-  name="$(cat "$ev/device/name" 2>/dev/null)"
-  vid=$((16#$(cat "$ev/device/id/vendor" 2>/dev/null || echo 0)))
-  pid=$((16#$(cat "$ev/device/id/product" 2>/dev/null || echo 0)))
-  echo "touchpad: $dev '$name' vendor=$vid product=$pid"
-  for kv in "NaturalScroll true" "TapToClick true" "ScrollTwoFinger true"; do
-    kwriteconfig6 --file kcminputrc --group Libinput --group "$vid" --group "$pid" --group "$name" \
-      --key "${kv%% *}" --type bool "${kv##* }" && echo "  kcminputrc ${kv%% *}=${kv##* }"
-  done
-done
-# 2) DBus (sesión actual)
-for i in 1 2 3 4 5 6; do
-  devs="$(qdbus6 org.kde.KWin /org/kde/KWin/InputDevice org.kde.KWin.InputDeviceManager.devicesSysNames 2>/dev/null)"
-  [ -n "$devs" ] && break; sleep 2
-done
-for d in $devs; do
-  P="/org/kde/KWin/InputDevice/$d"
-  [ "$(qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.touchpad 2>/dev/null)" = "true" ] || continue
-  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.naturalScroll true 2>&1 && echo "dbus $d naturalScroll=true"
-  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.tapToClick true 2>&1 && echo "dbus $d tapToClick=true"
-  qdbus6 org.kde.KWin "$P" org.kde.KWin.InputDevice.scrollTwoFinger true >/dev/null 2>&1 || true
-done
-qdbus6 org.kde.KWin /KWin org.kde.KWin.reconfigure >/dev/null 2>&1 || true
-} >> "$LOG" 2>&1
-EOF
-chmod +x /usr/local/bin/yaya-input-defaults
-cat > /etc/xdg/autostart/yaya-input-defaults.desktop <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=Yaya input defaults (natural scroll)
-Exec=/usr/local/bin/yaya-input-defaults
-OnlyShowIn=KDE;
-X-KDE-autostart-phase=2
-NoDisplay=true
-EOF
-chmod +x /usr/local/bin/yaya-apply-theme
-install -d /etc/xdg/autostart
-cat > /etc/xdg/autostart/yaya-apply-theme.desktop <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=Yaya theme (first login)
-Exec=/usr/local/bin/yaya-apply-theme
-OnlyShowIn=KDE;
-X-KDE-autostart-phase=2
-NoDisplay=true
-EOF
 
 echo "==> [6/6] Limpieza"
 apt-get purge -y git sassc >/dev/null 2>&1 || true
