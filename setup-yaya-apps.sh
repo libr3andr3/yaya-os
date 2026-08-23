@@ -19,7 +19,7 @@ apt-get install -y --no-install-recommends xournalpp \
 # (borrador / selección) no llegan bien; por X11 funcionan como deben.
 # Plasma sigue gestionando la tableta; sólo cambia el backend de GTK.
 install -d /usr/local/share/applications
-XPP=$(ls /usr/share/applications/com.github.xournalpp.xournalpp.desktop /usr/share/applications/xournalpp.desktop 2>/dev/null | head -1)
+XPP=$(ls /usr/share/applications/com.github.xournalpp.xournalpp.desktop /usr/share/applications/xournalpp.desktop 2>/dev/null | head -1 || true)
 if [ -n "$XPP" ]; then
   sed -E 's|^Exec=xournalpp|Exec=env GDK_BACKEND=x11 xournalpp|' "$XPP" > "/usr/local/share/applications/$(basename "$XPP")"
   echo "   OK: Xournal++ via Xwayland (botones del stylus)"
