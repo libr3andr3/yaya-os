@@ -15,6 +15,16 @@ apt-get install -y --no-install-recommends xournalpp \
   && echo "   OK: Xournal++ instalado" \
   || echo "   WARN: Xournal++ omitido"
 
+# Xournal++ bajo Xwayland: con GTK3 en Wayland los botones del lápiz
+# (borrador / selección) no llegan bien; por X11 funcionan como deben.
+# Plasma sigue gestionando la tableta; sólo cambia el backend de GTK.
+install -d /usr/local/share/applications
+XPP=$(ls /usr/share/applications/com.github.xournalpp.xournalpp.desktop /usr/share/applications/xournalpp.desktop 2>/dev/null | head -1)
+if [ -n "$XPP" ]; then
+  sed -E 's|^Exec=xournalpp|Exec=env GDK_BACKEND=x11 xournalpp|' "$XPP" > "/usr/local/share/applications/$(basename "$XPP")"
+  echo "   OK: Xournal++ via Xwayland (botones del stylus)"
+fi
+
 echo "==> [apps 2/3] Firefox ESR + uBlock Origin"
 apt-get install -y --no-install-recommends \
   firefox-esr firefox-esr-l10n-es-es webext-ublock-origin-firefox
