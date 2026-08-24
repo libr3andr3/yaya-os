@@ -47,15 +47,19 @@ sudo apt install -y podman podman-compose
 passthrough que configurar — Yaya OS *es* Debian); las apps localhost
 (puertos, volúmenes) funcionan igual que con Docker.
 
-## 4. Git soberano
+## 4. Git soberano — libre.yaya.tech
 
-Remoto propio en node.yaya.tech (repos bare sobre SSH, sin servicios extra):
+Forge propio (Forgejo) en node.yaya.tech, público en **https://libre.yaya.tech**
+(docker `forgejo`, web en 127.0.0.1:3300 detrás de Caddy; SNI exacto en el
+VPS → 10.0.0.5). Registro deshabilitado; credenciales admin en
+`node:~/forgejo/ADMIN-CREDENTIALS.txt`.
 
-```bash
-git remote add sovereign node.yaya.tech:git/yaya-os.git
-```
-
-Crear un repo nuevo en el nodo: `ssh node.yaya.tech 'git init --bare ~/git/<nombre>.git'`
+- Clonar (público, https): `git clone https://libre.yaya.tech/yaya/yaya-os.git`
+- Push desde la workstation: remoto `sovereign` con doble pushurl —
+  el bare `node.yaya.tech:git/yaya-os.git` **y** el forge por https
+  (token en `~/.git-credentials`). Un solo `git push sovereign` actualiza ambos.
+- Repo bare de respaldo en `node:~/git/yaya-os.git`; crear repos nuevos:
+  por la UI/API de Forgejo, o `ssh node.yaya.tech 'git init --bare ~/git/<nombre>.git'`
 
 ## 5. Pendientes por máquina
 
