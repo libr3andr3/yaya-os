@@ -1,48 +1,94 @@
 # Yaya OS
 
-> **2026-08-22:** escritorio = **KDE Plasma 6 (Wayland) + SDDM + tema Fluent Round**
-> (`setup-yaya-plasma.sh`). Cinnamon/XFCE quedan como referencia histórica.
-> Apps KDE (Dolphin, Okular, Gwenview, Kate, Discover…) + LibreOffice, Firefox+uBlock,
-> VLC, Thunderbird, CUPS. `fastfetch` se ejecuta sólo al escribirlo y renderiza el
-> alien al tamaño de la terminal.
+> **2026-08-25:** escritorio = **GNOME 48 (Wayland) + GDM**
+> (`setup-yaya-gnome.sh`). Plasma/Cinnamon/XFCE quedan como referencia histórica.
+>
+> El escritorio es el **GNOME de Debian sin parchar** — el mismo que sale de un
+> install por defecto de Debian 13 — y la marca Yaya se aplica sólo por los
+> caminos que GNOME soporta: `dconf` (base de sistema), logo de GDM, wallpaper
+> propio y tema de cursor. Nada de parchar gresources ni temas de shell: eso se
+> rompe en cada actualización. Apps GNOME (Files, Console, Software, Settings,
+> visor de documentos/fotos…) + LibreOffice, Firefox+uBlock, VLC, Thunderbird,
+> CUPS. `fastfetch` se ejecuta sólo al escribirlo y renderiza el alien al tamaño
+> de la terminal.
 
-# (histórico) Yaya OS — XFCE Windows 10 Kit
-
-XFCE configurado para verse y comportarse como Windows 10, con **identidad
-de marca Yaya completa** (arranque, greeter, wallpaper, os-release).
-Pensado para hardware refurbished (funciona bien en 4GB RAM) y para
-integrarse a una ISO Debian con `live-build`.
+Pensado para hardware refurbished y para construirse como ISO Debian con
+`live-build` (`yaya-flash.sh`).
 
 ## Contenido
 
 ```
-setup-yaya-win10.sh          # apariencia Win10 (tema GTK, iconos, panel)
+setup-yaya-gnome.sh          # ESCRITORIO: GNOME 48 + GDM + marca Yaya
 setup-yaya-branding.sh       # BRANDING DE ARRANQUE: os-release, hostname,
-                             #   splash Plymouth (lockup), logo del SO (alien)
+                             #   splash Plymouth (lockup + barra), logo del SO
+setup-yaya-touch.sh          # táctil: sólo las piezas que GNOME necesita
+setup-yaya-apps.sh           # Firefox ESR + uBlock, handlers HTML/PDF
+setup-yaya-desktop.sh        # Flathub, unattended-upgrades, CUPS
 setup-yaya-wallets.sh        # Electrum (BTC) + Feather (XMR) -> nodos yaya.cash
-setup-yaya-touch.sh          # (opcional) soporte táctil para XFCE
 setup-yaya-fastfetch.sh      # fastfetch con marca Yaya: alien en la terminal,
                              #   config global + saludo al abrir terminal
 yaya-webcam.sh               # puente DSLR -> /dev/video42 con banner Yaya
+yaya-flash.sh                # construye la ISO (live-build) y la flashea a USB
+calamares/                   # instalador gráfico (settings, módulos, branding)
 fastfetch/                   # assets de terminal
   config.jsonc               #   default del sistema (-> /etc/fastfetch)
   webcam.jsonc / -compact    #   banner del dashboard de yaya-webcam
   yaya-logo*.txt             #   alien ASCII fijo (fallback)
   yaya-logo-gen.py           #   re-renderiza el alien al tamaño de terminal
 branding/                    # marca REAL vectorizada (Yaya Tech), SVG puro
-  yaya-logo.svg              #   alien solo (logo del SO)
+  yaya-logo.svg              #   alien solo (logo del SO, logo de GDM)
   yaya-logo-full.svg         #   lockup alien + "Yaya Tech" (transparente)
   yaya-boot-1920x1080.svg    #   splash de arranque GRUB (negro + lockup)
   yaya-boot-640x480.svg      #   splash de arranque isolinux
-skel/                        # config por defecto para nuevos usuarios
-  .config/xfce4/
-    panel/whiskermenu-1.rc                        # menú Inicio
-    xfconf/xfce-perchannel-xml/
-      xfce4-panel.xml                             # panel inferior estilo Win10
-      xsettings.xml                               # tema GTK + iconos + fuente
-      xfwm4.xml                                   # decoración de ventanas + Aero Snap
-      xfce4-keyboard-shortcuts.xml                # Super=Inicio, Win+E, Win+flechas
+  yaya-wallpaper.svg         #   fondo de escritorio 4K (alien sobre negro)
+  yaya-wallpaper-light.svg   #   ídem, para el modo claro de GNOME
+tools/
+  make-wallpaper.py          # recompone los wallpapers desde el alien
+--- histórico (no se construye) ---
+setup-yaya-plasma.sh         # KDE Plasma 6 + SDDM + Fluent Round
+setup-yaya-win10.sh          # apariencia Win10 sobre XFCE
+setup-yaya-cinnamon.sh       # Cinnamon
+skel/.config/xfce4/          # panel/atajos estilo Win10 para XFCE
 ```
+
+## Escritorio GNOME (setup-yaya-gnome.sh)
+
+Hook `0500`. La regla es **no pelearse con GNOME**: se instala `gnome-core`
+(el GNOME oficial de Debian, el mismo de un install por defecto) y la marca
+va encima por los cuatro caminos soportados.
+
+| Qué | Cómo | Dónde |
+|---|---|---|
+| Tema oscuro + acento teal | `dconf` system db | `/etc/dconf/db/local.d/00-yaya-desktop` |
+| Wallpaper del alien | PNG 4K + `gnome-background-properties` | `/usr/share/backgrounds/yaya/` |
+| Logo del login | `org.gnome.login-screen logo` | `/etc/dconf/db/gdm.d/10-yaya-login` |
+| Cursor | Bibata Modern Ice + `update-alternatives` | `/usr/share/icons/` |
+
+Todo son **defaults, no locks**: el usuario puede cambiar cualquier cosa en
+Ajustes y su elección gana. No se parchea ningún `gresource` ni tema de
+GNOME Shell — eso es exactamente lo que se rompe en cada actualización.
+
+Otros toques: botones minimizar/maximizar visibles (el público de Yaya viene
+de Windows y GNOME sólo muestra "cerrar"), escalado fraccional habilitado,
+dash con Firefox/Files/Console/Software/Ajustes, sin diálogo de bienvenida
+de GNOME ni `gnome-initial-setup` (el usuario ya eligió idioma, teclado y
+cuenta en Calamares), y GNOME Software sin descargas en segundo plano
+(de la seguridad se encarga `unattended-upgrades`).
+
+### Cursor: por qué Bibata Modern Ice
+
+Se revisaron los sets que hoy se recomiendan para GNOME/Wayland —
+**Bibata**, **Capitaine**, **Phinger**, **Adwaita** (el de fábrica) y
+**WhiteSur**. Bibata Modern Ice gana para este caso:
+
+- Blanco con contorno negro y bordes redondeados: pega con el alien plata
+  sobre negro y se ve sobre cualquier wallpaper.
+- Vectorial y con tamaños hasta 4K — importante en la flota mixta de
+  paneles viejos y portátiles HiDPI.
+- **GPL-3.0**, o sea redistribuible en una ISO comercial (ver *Licencias*).
+
+Se instala desde el release pinneado `v2.0.7` de GitHub; si la descarga
+falla, el build **no** se cae: se queda el cursor Adwaita de GNOME.
 
 ## Branding de arranque (setup-yaya-branding.sh)
 
@@ -55,14 +101,17 @@ sin depender de ninguna fuente. Aplica:
   `/etc/lsb-release`, `hostname=yaya`, `/etc/issue`, `/etc/motd`.
 - **Splash de arranque**: tema Plymouth `yaya` — el lockup completo
   (alien + "Yaya Tech") **centrado** sobre negro, escalado al tamaño de
-  pantalla en tiempo de arranque (nítido en cualquier resolución).
+  pantalla en tiempo de arranque (nítido en cualquier resolución), con una
+  **barra de progreso** debajo alimentada por el progreso real del arranque
+  (misma composición que tenía el splash de Plasma).
 - **Logo del SO = solo el alien**: se instala como icono `distributor-logo`
-  / `start-here`, así que el botón Inicio de Whisker muestra el alien.
+  / `start-here`; GNOME lo muestra en Ajustes → Acerca de vía `LOGO=` de
+  `/etc/os-release`.
 - **Menú de arranque** (isolinux/GRUB): mismo lockup sobre negro
   (lo pone `yaya-flash.sh`).
 
-**No toca XFCE**: deliberadamente no cambia wallpaper, tema, panel ni
-greeter — solo el arranque y la identidad del sistema. Los SVG se
+**No toca el escritorio**: no cambia wallpaper, tema ni greeter — de eso se
+ocupa `setup-yaya-gnome.sh`. Aquí sólo el arranque y la identidad. Los SVG se
 rasterizan en el chroot con `rsvg-convert` (instalado y purgado por el
 propio hook). Corre como hook `0520`.
 
@@ -94,41 +143,33 @@ Hook live-build: `config/hooks/live/0535-yaya-fastfetch.hook.chroot`.
 
 ## Táctil / pantallas táctiles
 
-Ver **[TOUCHSCREEN.md](TOUCHSCREEN.md)**. Resumen: XFCE se queda como
-imagen por defecto (la más liviana) y `setup-yaya-touch.sh` le agrega
-teclado en pantalla + auto-rotación + gestos para los convertibles. Para
-una flota mayoritariamente táctil, la recomendación es un **build aparte
-con KDE Plasma 6** (mismo branding, mejor táctil), no GNOME.
+Ver **[TOUCHSCREEN.md](TOUCHSCREEN.md)**. Resumen: **lo maneja GNOME**.
+Teclado en pantalla que aparece y desaparece solo, gestos, auto-rotación,
+modo tablet y stylus vienen de fábrica en GNOME 48 sobre Wayland.
+`setup-yaya-touch.sh` sólo instala `iio-sensor-proxy` (el acelerómetro) y
+deja unos defaults de touchpad en `dconf` — cero hacks.
 
-## Instalación manual (una máquina)
+## Construir la ISO
 
 ```bash
-sudo ./setup-yaya-win10.sh
+sudo ./yaya-flash.sh --build-only     # sólo la ISO
+sudo ./yaya-flash.sh                  # ISO + flashear a un USB
+```
+
+`yaya-flash.sh` arma el árbol de `live-build`, cablea cada `setup-yaya-*.sh`
+como hook numerado (`0500` GNOME → `0560` Calamares) y copia los assets de
+`branding/` al chroot.
+
+## Aplicar a una máquina ya instalada
+
+Los hooks también corren sueltos sobre un Debian 13 normal:
+
+```bash
+sudo ./setup-yaya-gnome.sh      # escritorio + marca
+sudo ./setup-yaya-branding.sh   # identidad + splash de arranque
+sudo ./setup-yaya-touch.sh      # acelerómetro + defaults de touchpad
 # cerrar sesión y volver a entrar
 ```
-
-## Integración con live-build
-
-```bash
-# En tu árbol de live-build:
-cp setup-yaya-win10.sh config/hooks/live/0500-yaya-win10.hook.chroot
-chmod +x config/hooks/live/0500-yaya-win10.hook.chroot
-cp -r skel config/includes.chroot/etc/skel-extra   # y ajustar ruta en el hook
-# o más simple: meter skel/ directo en config/includes.chroot/etc/skel/
-```
-
-Recomendado: en producción, empaqueta el tema y los iconos como .deb
-propios (yaya-theme-win10) en tu repo APT en vez de clonar de GitHub en
-el hook — build reproducible y sin dependencia de red externa.
-
-## Qué replica de Windows 10
-
-- Panel único inferior de 40px: Inicio | tareas agrupadas | systray | volumen | reloj con fecha
-- Tecla Windows abre el menú Inicio (Whisker)
-- Win+E → explorador, Win+L → bloquear, Win+flechas → snap de ventanas
-- Alt+Tab, Alt+F4
-- Botones de ventana a la derecha (min/max/cerrar), snap al arrastrar a bordes
-- Tema GTK "Windows-10" y set de iconos "Windows-10" de B00merang (GPL)
 
 ## Wallets (setup-yaya-wallets.sh) — NO incluido en la ISO por ahora
 
@@ -163,8 +204,19 @@ lo soporta nativo por Tor.
 
 ## Licencias — importante para distribución comercial
 
-- Tema GTK: B00merang-Project/Windows-10 — GPL-3.0 ✔ redistribuible
-- Iconos: B00merang-Artwork/Windows-10 — GPL ✔ redistribuible
-- NO incluir: Segoe UI, wallpapers de Microsoft, logo de Windows.
-  Este kit usa Open Sans (SIL OFL) como reemplazo de Segoe UI.
+- Cursor: `ful1e5/Bibata_Cursor` (Bibata Modern Ice) — GPL-3.0 ✔ redistribuible
+- Escritorio, iconos y tipografía: GNOME/Adwaita + Cantarell, tal como los
+  empaqueta Debian ✔ redistribuible
+- Marca Yaya (`branding/`, wallpapers): propiedad de Yaya Tech PBC
+- NO incluir: Segoe UI, wallpapers de Microsoft, logo de Windows (aplicaba
+  al kit XFCE histórico, ver abajo).
 - Verifica cada asset adicional que agregues antes de meterlo a la ISO.
+
+## (histórico) Kit XFCE "Windows 10"
+
+`setup-yaya-win10.sh`, `setup-yaya-cinnamon.sh`, `setup-yaya-plasma.sh` y
+`skel/.config/xfce4/` son las etapas anteriores del proyecto (XFCE con
+apariencia Win10 → Cinnamon → KDE Plasma 6). Se conservan como referencia;
+**ninguno se construye**. El tema y los iconos "Windows-10" de B00merang que
+usaba el kit XFCE son GPL y eran redistribuibles, pero ya no se incluyen en
+la ISO.

@@ -1,70 +1,63 @@
-# Yaya OS — Táctil: qué entorno de escritorio usar
+# Yaya OS — Táctil: lo maneja GNOME
 
-Pregunta: *¿seguir con XFCE o cambiar de DE para pantallas táctiles?*
-Respuesta corta según el objetivo del proyecto (hardware refurbished,
-4 GB RAM, apariencia Windows 10):
+**Decisión (2026-08-25): el escritorio es GNOME 48 sobre Wayland**, y el
+soporte táctil no se configura — viene de fábrica. Este documento explica
+qué da GNOME solo, qué instalamos nosotros (muy poco) y qué se perdió al
+cambiar desde Plasma.
 
-| Necesidad | Recomendación |
+## Qué da GNOME sin tocar nada
+
+| Necesidad táctil | GNOME 48 / Wayland |
 |---|---|
-| Flota **mayoritariamente NO táctil**, muy poca RAM | **Quedarse en XFCE** + `setup-yaya-touch.sh` para los pocos convertibles |
-| Flota **mayoritariamente táctil** (2-en-1, convertibles) | **Build aparte con KDE Plasma 6 (Wayland)** |
-| Máxima calidad táctil, sin importar recursos | GNOME — pero **no** encaja con 4 GB ni con el look Win10 |
+| Teclado en pantalla que **auto-aparece** al tocar un campo de texto | Nativo, y se retira solo. Sin `maliit`, sin `onboard` |
+| Gestos multitáctiles y swipes de borde | Nativos de mutter (3/4 dedos, overview, workspaces) |
+| Auto-rotación por acelerómetro | Nativa — sólo necesita `iio-sensor-proxy` |
+| Modo tablet (objetivos grandes, long-press = clic derecho) | Nativo |
+| Stylus: presión, botones, mapeo por pantalla | Ajustes → Tableta gráfica |
+| Scroll cinético | Nativo |
 
-## Por qué
+Por eso `setup-yaya-touch.sh` quedó en 20 líneas: instala
+`iio-sensor-proxy` más los drivers `libinput` para la sesión X11 de
+respaldo, borra cualquier override de X11 heredado de las etapas
+anteriores, y deja unos defaults de touchpad en `dconf`
+(`tap-to-click`, scroll natural, `disable-while-typing`). Nada más.
 
-Lo que hace que un escritorio se sienta "seamless" en táctil:
+Ese hook **sí va cableado por defecto** en la ISO — al contrario que en la
+etapa XFCE, donde había que activarlo a mano porque el teclado en pantalla
+aparecía sin que nadie lo pidiera. GNOME sólo lo muestra ante input táctil
+real, así que en un desktop sin pantalla táctil no molesta.
 
-1. Teclado en pantalla que **auto-aparece** al tocar un campo de texto.
-2. Gestos multitáctiles nativos (scroll, pinch-zoom, swipe de bordes).
-3. **Auto-rotación** por acelerómetro.
-4. Modo tablet: objetivos de toque grandes, long-press = clic derecho.
+## Qué se cambió y qué costó
 
-### XFCE (lo que usa Yaya hoy)
-Sin historia táctil nativa. Se puede **aproximar** con piezas sueltas
-(`onboard`, `iio-sensor-proxy`, `touchegg`, reglas de `libinput`) — eso
-es justo lo que hace `setup-yaya-touch.sh`. Queda "usable", **no
-seamless**: el teclado en pantalla no siempre aparece solo, no hay modo
-tablet real. Ventaja decisiva: es el más liviano y ya está temado como
-Win10. Ideal si el táctil es minoritario.
+Las etapas anteriores (XFCE con `onboard`+`touchegg`, luego Plasma 6 con
+Maliit y llamadas a KWin por DBus para fijar el touchpad en cada login)
+existían para **aproximar** lo que GNOME ya trae. Ese código se borró:
+no había nada que aproximar.
 
-### KDE Plasma 6 — la recomendación si el táctil importa
-- **Modo tablet** real, con teclado en pantalla (Maliit) que **auto-aparece**.
-- Gestos y swipes de borde nativos en Wayland; auto-rotación lista de fábrica.
-- Scroll cinético, long-press = clic derecho.
-- Corre bien en 4 GB (idle ~500–600 MB con Plasma 6).
-- **Se tematiza a Windows 10 mejor que cualquier otro** (los clones de
-  Win10 más fieles usan Plasma). El trabajo estético actual se traslada
-  con ventaja, no se pierde.
+El costo real, y hay que decirlo: **GNOME pesa más**. En reposo ronda
+800 MB – 1 GB de RAM frente a ~500–600 MB de Plasma 6 y bastante menos de
+XFCE. En las máquinas de 4 GB de la flota funciona, pero es el escritorio
+más exigente que ha usado el proyecto. Mitigaciones que ya están en la
+imagen:
 
-Trade-off: es un **segundo build**, no un simple hook. Más peso de ISO y
-otra pila de temas que mantener.
+- `gnome-core` en vez del metapaquete `gnome` completo: el mismo escritorio
+  sin la cola de apps duplicadas (Evolution, juegos) que ya cubrimos con
+  LibreOffice/Thunderbird/VLC.
+- Sin extensiones de GNOME Shell: cada una es memoria y una fuente de
+  roturas en cada actualización.
+- GNOME Software sin descargas en segundo plano; de la seguridad se
+  encarga `unattended-upgrades`.
 
-### GNOME
-El mejor táctil de Linux, pero pesado (idle ~1 GB, necesita GPU decente)
-y difícil de disfrazar de Windows 10. Contradice el objetivo de hardware
-modesto. No recomendado para Yaya.
+Si aparece un lote de máquinas por debajo de 4 GB, la salida no es
+recortar GNOME sino un **perfil de imagen aparte** desde este mismo repo:
+`setup-yaya-plasma.sh` sigue versionado y el branding
+(`setup-yaya-branding.sh`, `branding/`) es independiente del escritorio.
 
-## Recomendación operativa
+## Xournal++ (retirado)
 
-Mantener **dos perfiles de imagen** desde el mismo repo:
-
-- `yaya-xfce` (por defecto): el más liviano; táctil opcional vía
-  `setup-yaya-touch.sh` para los convertibles sueltos.
-- `yaya-plasma-touch`: para lotes de convertibles/2-en-1. Mismo branding
-  (los assets de `branding/` y el hook `setup-yaya-branding.sh` son
-  independientes del DE), mismas wallets, tema Win10 sobre Plasma.
-
-Así una sola marca "Yaya OS" cubre ambos tipos de hardware sin cargar a
-los equipos viejos con un escritorio que no necesitan.
-
-## Cómo activar el táctil en el build XFCE actual
-
-```bash
-# En build-yaya-os, cablear el hook opcional:
-cp setup-yaya-touch.sh config/hooks/live/0530-yaya-touch.hook.chroot
-chmod +x config/hooks/live/0530-yaya-touch.hook.chroot
-```
-
-> Nota: no viene cableado por defecto porque en un desktop no táctil el
-> teclado en pantalla puede aparecer sin querer. Actívalo solo para
-> imágenes destinadas a hardware táctil.
+Se quitó de la ISO el 2026-08-25. Su configuración de stylus —forzar
+Xwayland con `GDK_BACKEND=x11` para que los botones del lápiz llegaran—
+nunca funcionó de forma fiable. Bajo GNOME el lápiz lo gestiona el
+escritorio, y quien necesite tomar notas a mano lo instala desde la tienda.
+`setup-yaya-apps.sh` además purga el paquete y el `.desktop` parcheado si
+vienen de un build anterior.

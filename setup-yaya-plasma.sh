@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 # ============================================================
-# Yaya OS — KDE Plasma 6 + SDDM + tema Fluent Round (vinceliuice)
+# Yaya OS — (HISTÓRICO) KDE Plasma 6 + SDDM + tema Fluent Round
+#
+#   *** YA NO SE USA. ***  Desde 2026-08-25 el escritorio es GNOME 48:
+#   ver setup-yaya-gnome.sh, que es el que yaya-flash.sh cablea como
+#   hook 0500. Este script se conserva como referencia (igual que
+#   setup-yaya-cinnamon.sh y setup-yaya-win10.sh) y NO se construye.
+#
+# KDE Plasma 6 + SDDM + tema Fluent Round (vinceliuice)
 #   · Reemplaza a Cinnamon/LightDM.
 #   · Wayland por defecto (mejor táctil/gestos); sesión X11 disponible.
 #   · Tema global Fluent-round-dark: Plasma, ventanas (Aurorae), Kvantum,

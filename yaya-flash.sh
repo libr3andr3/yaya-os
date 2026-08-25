@@ -113,20 +113,20 @@ EOF
   echo "==> Apps de escritorio (LibreOffice, VLC, impresión, tienda...)"
   cp "$KIT_DIR/yaya-desktop-apps.list" config/package-lists/yaya-desktop.list.chroot
 
-  echo "==> Integrando hooks del kit (Plasma + branding + apps + Calamares)"
+  echo "==> Integrando hooks del kit (GNOME + branding + apps + Calamares)"
   mkdir -p config/hooks/live
-  # Escritorio KDE Plasma 6 + SDDM + Fluent Round (reemplaza a Cinnamon).
-  cp "$KIT_DIR/setup-yaya-plasma.sh"    config/hooks/live/0500-yaya-plasma.hook.chroot
+  # Escritorio GNOME 48 + GDM con marca Yaya (reemplaza a Plasma/Cinnamon).
+  cp "$KIT_DIR/setup-yaya-gnome.sh"     config/hooks/live/0500-yaya-gnome.hook.chroot
   # Wallets (Electrum/Feather -> nodos yaya.cash): DESACTIVADO hasta que la
   # infraestructura esté lista. Reactivar descomentando:
   # cp "$KIT_DIR/setup-yaya-wallets.sh"   config/hooks/live/0510-yaya-wallets.hook.chroot
   # Branding del sistema (os-release, plymouth, iconos). Corre antes de Calamares.
   cp "$KIT_DIR/setup-yaya-branding.sh"  config/hooks/live/0520-yaya-branding.hook.chroot
-  # Soporte táctil (onboard solo aparece en hardware con pantalla táctil)
+  # Táctil: sólo las piezas de hardware que GNOME necesita (iio-sensor-proxy)
   cp "$KIT_DIR/setup-yaya-touch.sh"     config/hooks/live/0530-yaya-touch.hook.chroot
   # Fastfetch con marca (alien en la terminal, config global, saludo)
   cp "$KIT_DIR/setup-yaya-fastfetch.sh"  config/hooks/live/0535-yaya-fastfetch.hook.chroot
-  # Apps por defecto: Xournal++ (lápiz) + Firefox ESR con uBlock Origin
+  # Apps por defecto: Firefox ESR con uBlock Origin + handlers HTML/PDF
   cp "$KIT_DIR/setup-yaya-apps.sh"      config/hooks/live/0540-yaya-apps.hook.chroot
   # Post-config de apps de escritorio (Flathub, unattended-upgrades, CUPS)
   cp "$KIT_DIR/setup-yaya-desktop.sh"   config/hooks/live/0545-yaya-desktop.hook.chroot

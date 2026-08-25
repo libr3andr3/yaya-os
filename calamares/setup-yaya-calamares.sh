@@ -91,11 +91,19 @@ install -d /etc/skel/.config/autostart
 cp /usr/share/applications/yaya-install.desktop \
    /etc/skel/.config/autostart/yaya-install.desktop
 
-# Icono en el escritorio del usuario live (Nemo lo marca como confiable).
-install -d /etc/skel/Desktop
-cp /usr/share/applications/yaya-install.desktop /etc/skel/Desktop/yaya-install.desktop
-chmod +x /etc/skel/Desktop/yaya-install.desktop
-gio set /etc/skel/Desktop/yaya-install.desktop metadata::trusted true 2>/dev/null || true
+# GNOME no dibuja iconos en el escritorio, así que el punto de reentrada
+# si el usuario cierra el instalador es el dash: lo ponemos de primero.
+# Este keyfile es SÓLO del live — yaya-postinstall lo borra en el sistema
+# instalado y vuelve a dejar los favoritos normales.
+FAVS=""
+[ -f /usr/share/yaya/theme/gnome ] && FAVS="$(sed -n 's/^FAVS=//p' /usr/share/yaya/theme/gnome)"
+install -d /etc/dconf/db/local.d
+cat > /etc/dconf/db/local.d/50-yaya-live-installer <<EOF
+# Yaya OS (sólo sesión live) — el instalador de primero en el dash.
+[org/gnome/shell]
+favorite-apps=['yaya-install.desktop'${FAVS:+, $FAVS}]
+EOF
+dconf update 2>/dev/null || true
 
 echo "==> [5/5] Regla polkit: Calamares sin pedir contraseña en la sesión live"
 install -d /etc/polkit-1/rules.d

@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # ============================================================
-# Yaya OS — Branding de ARRANQUE (no toca XFCE)
+# Yaya OS — Branding de ARRANQUE (no toca el escritorio)
 #   · Identidad del sistema: os-release, hostname, issue, motd
-#   · Splash de arranque (Plymouth): lockup Yaya Tech CENTRADO
-#   · Logo del SO = solo el alien (icono distributor-logo)
+#   · Splash de arranque (Plymouth): lockup Yaya Tech centrado sobre
+#     negro, con barra de progreso debajo
+#   · Logo del SO = solo el alien (icono distributor-logo). GNOME lo usa
+#     en Ajustes → Acerca de, vía LOGO= de /etc/os-release.
 #
-# Deliberadamente NO cambia: wallpaper, tema, panel ni greeter de
-# XFCE. Solo el arranque y la identidad del sistema.
+# Deliberadamente NO cambia wallpaper, tema ni greeter: de eso se ocupa
+# setup-yaya-gnome.sh. Aquí sólo el arranque y la identidad del sistema.
 #
 #   Uso manual:  sudo ./setup-yaya-branding.sh
 #   En live-build: config/hooks/live/0520-yaya-branding.hook.chroot
@@ -101,10 +103,17 @@ cat > /etc/motd <<EOF
 
 EOF
 
-echo "==> [5/6] Splash de arranque (Plymouth): lockup Yaya Tech centrado"
+echo "==> [5/6] Splash de arranque (Plymouth): alien + barra de progreso"
 # Logo (lockup transparente) a alta resolución -> el script lo centra y
 # escala al tamaño de pantalla, nítido en cualquier resolución.
 render "$ART/yaya-logo-full.svg" 2000 1104 "$PLYMOUTH_DIR/logo.png"
+# La barra: Plymouth-script no sabe dibujar rectángulos, así que la
+# componemos con dos PNG lisos (400x6) que el script reescala: uno de
+# fondo y otro que se recorta al ancho del progreso.
+bar_png() { printf '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1" fill="%s"/></svg>' "$2" \
+              | rsvg-convert -w 400 -h 6 -o "$PLYMOUTH_DIR/$1"; }
+bar_png bar-track.png '#2a3038'
+bar_png bar-fill.png  '#cfd4da'
 cat > "$PLYMOUTH_DIR/yaya.plymouth" <<EOF
 [Plymouth Theme]
 Name=Yaya OS
@@ -121,42 +130,45 @@ sw = Window.GetWidth();  sh = Window.GetHeight();
 Window.SetBackgroundTopColor(0.0, 0.0, 0.0);
 Window.SetBackgroundBottomColor(0.0, 0.0, 0.0);
 
-# --- lockup centrado, escalado al ~48% del ancho de pantalla ---
+# --- lockup centrado, escalado al ~42% del ancho de pantalla ---
 logo = Image("logo.png");
 lw = logo.GetWidth();  lh = logo.GetHeight();
-target_w = sw * 0.48;
-scale = target_w / lw;
-logo = logo.Scale(lw * scale, lh * scale);
-logo_spr = Sprite(logo);
-logo_spr.SetX(sw / 2 - (lw * scale) / 2);
-logo_spr.SetY(sh / 2 - (lh * scale) / 2);
+scale = (sw * 0.42) / lw;
+logo_w = lw * scale;  logo_h = lh * scale;
+logo_spr = Sprite(logo.Scale(logo_w, logo_h));
+logo_spr.SetX(sw / 2 - logo_w / 2);
+logo_spr.SetY(sh / 2 - logo_h / 2);
 logo_spr.SetZ(10);
 
-# --- puntos de progreso bajo el lockup (color alien #cfd4da) ---
-n = 5;  dots = [];
-for (i = 0; i < n; i++) {
-  d = Image.Text(".", 0.81, 0.83, 0.85);
-  s = Sprite(d);
-  s.SetX(sw / 2 - (n * 12) / 2 + i * 24);
-  s.SetY(sh / 2 + (lh * scale) / 2 + 24);
-  s.SetZ(11);
-  dots[i] = s;
-}
-tick = 0;
-fun refresh() {
-  tick++;
-  for (i = 0; i < n; i++)
-    dots[i].SetOpacity(((Math.Int(tick / 6) % n) == i) ? 1 : 0.25);
-}
-Plymouth.SetRefreshFunction(refresh);
+# --- barra de progreso DEBAJO del lockup (como el splash de Plasma) ---
+bar_w = 260;  bar_h = 6;
+bar_x = sw / 2 - bar_w / 2;
+bar_y = sh / 2 + logo_h / 2 + 40;
 
-# --- prompt de contraseña (LUKS / login) bajo los puntos ---
+track = Sprite(Image("bar-track.png").Scale(bar_w, bar_h));
+track.SetX(bar_x);  track.SetY(bar_y);  track.SetZ(11);
+
+fill_img = Image("bar-fill.png");
+fill = Sprite();
+fill.SetX(bar_x);  fill.SetY(bar_y);  fill.SetZ(12);
+
+# Plymouth entrega el progreso real del arranque (0..1). Nunca escalamos a
+# 0 px de ancho: Image.Scale(0, ...) no produce una imagen válida.
+fun on_progress(duration, progress) {
+  p = progress;
+  if (p < 0.02) p = 0.02;
+  if (p > 1)    p = 1;
+  fill.SetImage(fill_img.Scale(bar_w * p, bar_h));
+}
+Plymouth.SetBootProgressFunction(on_progress);
+
+# --- prompt de contraseña (LUKS / login) bajo la barra ---
 fun on_pw(prompt, bullets) {
   txt = Image.Text(prompt + "  " + bullets, 1, 1, 1);
   p = Sprite(txt);
   p.SetX(sw / 2 - txt.GetWidth() / 2);
-  p.SetY(sh / 2 + (lh * scale) / 2 + 60);
-  p.SetZ(12);
+  p.SetY(bar_y + 34);
+  p.SetZ(13);
 }
 Plymouth.SetDisplayPasswordFunction(on_pw);
 PLY
@@ -186,7 +198,11 @@ rm -f /usr/share/applications/yaya-install.desktop /usr/bin/yaya-install \
 for h in /home/* /root; do
   rm -f "$h/Desktop/yaya-install.desktop" "$h/.config/autostart/yaya-install.desktop"
 done
-# (sin autologin: SDDM preselecciona al usuario creado)
+# El instalador estaba de primero en el dash de GNOME sólo en el live:
+# fuera, y vuelven los favoritos normales de 00-yaya-desktop.
+rm -f /etc/dconf/db/local.d/50-yaya-live-installer
+command -v dconf >/dev/null && dconf update || true
+# (sin autologin: GDM preselecciona al usuario creado)
 
 # 2) GRUB instalado: arranque silencioso (sin verbose) + timeout corto
 if [ -f /etc/default/grub ]; then
@@ -221,5 +237,5 @@ apt-get autoremove -y >/dev/null 2>&1 || true
 echo ""
 echo "Branding de arranque aplicado (escritorio intacto):"
 echo "  Identidad : ${OS_NAME} ${OS_VERSION} (${OS_CODENAME})"
-echo "  Splash    : Plymouth 'yaya' — lockup Yaya Tech centrado sobre negro"
+echo "  Splash    : Plymouth 'yaya' — lockup Yaya Tech + barra de progreso"
 echo "  Logo SO   : alien (icono distributor-logo / start-here)"

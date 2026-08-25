@@ -1,21 +1,25 @@
-# Yaya OS — "daily driver" app set for non-technical users (KDE Plasma edition).
+# Yaya OS — "daily driver" app set for non-technical users (GNOME edition).
 # Installed via live-build package list (config/package-lists/yaya-desktop.list.chroot).
-# Desktop core apps (Dolphin, Konsole, Kate, Okular, Gwenview, Ark, KCalc,
-# Spectacle, Discover, Filelight, System Monitor, Partition Manager,
-# Print Manager) are installed by setup-yaya-plasma.sh.
+# The desktop itself (GNOME Shell, GDM, Files, Console, Software, Settings,
+# Document Viewer, Image Viewer, Calculator, Disks, System Monitor…) comes
+# from gnome-core, installed by setup-yaya-gnome.sh.
+#
+# Keep this list to packages that exist in Debian stable: a missing name here
+# fails the whole live-build. Anything uncertain goes in the tolerant loop in
+# setup-yaya-gnome.sh instead.
 
 # --- Office & documents ---
 libreoffice-writer
 libreoffice-calc
 libreoffice-impress
-libreoffice-kf6
+libreoffice-gtk3
 libreoffice-l10n-es
 hunspell-en-us
 hunspell-es
 
 # --- Photos, video, music, camera ---
 vlc
-kamoso
+cheese
 gstreamer1.0-plugins-good
 gstreamer1.0-plugins-bad
 gstreamer1.0-plugins-ugly
@@ -32,7 +36,7 @@ cups-browsed
 ipp-usb
 printer-driver-gutenprint
 hplip
-skanpage
+simple-scan
 sane-airscan
 
 # --- Hardware / laptop ---
@@ -44,6 +48,7 @@ systemd-timesyncd
 
 # --- Software store & updates ---
 flatpak
+gnome-software-plugin-flatpak
 unattended-upgrades
 
 # --- Fonts ---
@@ -54,5 +59,6 @@ fonts-crosextra-carlito
 fonts-crosextra-caladea
 
 # --- System utilities ---
+file-roller
 unzip
 zip
