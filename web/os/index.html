@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yaya OS 2.0 — Soberanía digital sobre hardware honesto</title>
+<meta name="description" content="Yaya OS 2.0: Debian 13 + KDE Plasma 6 con marca Yaya, listo para laptops refurbished y tablets. ISO firmada, instalador en español, sin telemetría.">
+<meta property="og:title" content="Yaya OS 2.0 — Soberanía digital sobre hardware honesto">
+<meta property="og:description" content="Debian 13 + KDE Plasma 6, instalador en español, actualizaciones automáticas, ISO firmada con GPG. Gratis y libre.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yaya.tech/os">
+<meta property="og:image" content="https://yaya.tech/os/screenshot-plasma-live.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="800">
+<meta property="og:locale" content="es_PE">
+<meta property="og:site_name" content="Yaya Tech">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Yaya OS 2.0">
+<meta name="twitter:description" content="Debian 13 + KDE Plasma 6 con marca Yaya. ISO firmada, gratis y libre.">
+<meta name="twitter:image" content="https://yaya.tech/os/screenshot-plasma-live.png">
+<meta name="theme-color" content="#050807">
+<link rel="icon" href="/alien-icon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://yaya.tech/os">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050807; --panel: #0a100e; --line: #16211d; --line-hi: #23372f;
+    --ink: #cfd4da; --dim: #7e8c87; --faint: #4a5651;
+    --green: #5fd7af; --green-dk: #0e2a21;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 15px; line-height: 1.7; }
+  a { color: var(--green); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ::selection { background: var(--green); color: #041410; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; max-width: 980px; margin: 0 auto; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); letter-spacing: .12em; font-size: 13px; }
+  .brand img { width: 22px; height: 22px; }
+  .brand:hover { text-decoration: none; }
+  nav .links { display: flex; gap: 18px; font-size: 12px; letter-spacing: .08em; }
+  nav .links a { color: var(--dim); }
+  nav .links a.on { color: var(--green); }
+
+  .hero { padding: 56px 0 28px; border-bottom: 1px solid var(--line); }
+  .kicker { color: var(--green); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; margin: 0 0 14px; }
+  h1 { font-size: clamp(30px, 5.5vw, 52px); line-height: 1.1; margin: 0 0 14px; font-weight: 700; letter-spacing: -.02em; color: #fff; }
+  h1 span { color: var(--green); }
+  .lead { color: var(--dim); max-width: 640px; margin: 0 0 30px; font-size: 16px; }
+
+  .dl { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+  .btn { display: block; background: var(--green); color: #041410; padding: 18px 22px; border-radius: 6px; font-weight: 700; letter-spacing: .04em; border: 1px solid var(--green); }
+  .btn:hover { text-decoration: none; background: #7ee6c3; }
+  .btn small { display: block; font-weight: 400; font-size: 12px; opacity: .8; margin-top: 4px; }
+  .meta { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; font-size: 12.5px; color: var(--dim); }
+  .meta code { color: var(--ink); font-size: 11.5px; word-break: break-all; }
+  .meta .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  .meta .row a { border: 1px solid var(--line-hi); padding: 2px 10px; border-radius: 4px; }
+
+  section { padding: 44px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--green); margin: 0 0 22px; font-weight: 500; }
+  h2::before { content: "// "; color: var(--faint); }
+  h3 { font-size: 15px; margin: 0 0 8px; color: #fff; font-weight: 700; }
+  p { margin: 0 0 14px; }
+
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .shots figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .shots img { display: block; width: 100%; height: auto; }
+  .shots figcaption { font-size: 12px; color: var(--dim); padding: 8px 12px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 20px; }
+  .card ul { margin: 0; padding-left: 18px; color: var(--dim); font-size: 13.5px; }
+  .card li { margin: 4px 0; }
+  .card li b { color: var(--ink); font-weight: 500; }
+
+  pre { background: #030504; border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; margin: 8px 0 18px; }
+  pre .c { color: var(--faint); }
+  pre .p { color: var(--green); }
+  code { font-family: inherit; }
+  p code { background: var(--panel); border: 1px solid var(--line); padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; }
+  .steps li { counter-increment: s; padding-left: 40px; position: relative; margin-bottom: 18px; }
+  .steps li::before { content: counter(s, decimal-leading-zero); position: absolute; left: 0; top: 2px; color: var(--green); font-size: 12px; letter-spacing: .1em; }
+  .fine { font-size: 12.5px; color: var(--dim); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  td, th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--dim); font-weight: 500; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  .tablewrap { overflow-x: auto; }
+
+  footer { padding: 36px 0 48px; color: var(--faint); font-size: 12px; }
+  footer .wrap { display: flex; flex-direction: column; gap: 8px; }
+  footer a { color: var(--dim); }
+
+  @media (max-width: 720px) { .dl { grid-template-columns: 1fr; } nav .links { display: none; } .hero { padding-top: 32px; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/"><img src="/alien-icon.svg" alt=""><b>YAYA TECH</b></a>
+  <div class="links"><a href="/os" class="on">YAYA OS</a><a href="https://agento.ceo">AGENTO</a><a href="https://libre.yaya.tech/yaya/yaya-os">CÓDIGO</a></div>
+</nav>
+
+<div class="wrap">
+<div class="hero">
+  <p class="kicker">Yaya OS 2.0 · Debian 13 · KDE Plasma 6</p>
+  <h1>Soberanía digital<br>sobre <span>hardware honesto</span>.</h1>
+  <p class="lead">Un sistema operativo libre para laptops refurbished, tablets y las máquinas que nadie más quiere mantener. Sin telemetría, sin cuentas obligatorias, con instalador en español y actualizaciones de seguridad automáticas. Debian por debajo, Yaya por encima.</p>
+  <div class="dl">
+    <a class="btn" href="/os/yaya-os-2.0-amd64.iso" download>▼ Descargar Yaya OS 2.0 (amd64)<small>yaya-os-2.0-amd64.iso · 2.2 GB · ISO híbrida (USB / DVD, UEFI y BIOS)</small></a>
+    <div class="meta">
+      SHA-256<br><code>3eaba2144f72471e520bc657835b4bfbde21d0c9370cdcfc508316a10711abc2</code>
+      <div class="row">
+        <a href="/os/yaya-os-2.0-amd64.iso.sha256">.sha256</a>
+        <a href="/os/yaya-os-2.0-amd64.iso.asc">firma .asc</a>
+        <a href="/os/yaya-os-release-key.asc">llave pública</a>
+      </div>
+      <div style="margin-top:8px">Publicado 2026-08-29 · build 16 · <a href="#verificar">cómo verificar</a></div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <h2>Así se ve</h2>
+  <div class="shots">
+    <figure><img src="/os/screenshot-plasma-live.png" alt="Escritorio Plasma 6 de Yaya OS con tema Fluent Round oscuro" width="1280" height="800" loading="lazy"><figcaption>Escritorio Plasma 6 · Fluent Round</figcaption></figure>
+    <figure><img src="/os/screenshot-sddm-login.png" alt="Pantalla de inicio de sesión de Yaya OS" width="1280" height="800" loading="lazy"><figcaption>Inicio de sesión</figcaption></figure>
+    <figure><img src="/os/screenshot-installer-partitions.png" alt="Instalador Calamares de Yaya OS, paso de particiones" width="1280" height="800" loading="lazy"><figcaption>Instalador en español</figcaption></figure>
+    <figure><img src="/os/screenshot-fastfetch.png" alt="Terminal de Yaya OS con fastfetch y el alien" width="1280" height="800" loading="lazy"><figcaption><code>fastfetch</code> en la terminal</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Qué trae</h2>
+  <div class="grid">
+    <div class="card"><h3>Base</h3><ul>
+      <li><b>Debian 13 «trixie»</b> estable, amd64</li>
+      <li>Kernel y firmware libre + no-libre (Wi-Fi, Bluetooth, gráficos)</li>
+      <li><b>Actualizaciones de seguridad automáticas</b> (unattended-upgrades)</li>
+      <li>Flatpak con Flathub habilitado</li>
+    </ul></div>
+    <div class="card"><h3>Escritorio</h3><ul>
+      <li><b>KDE Plasma 6</b> en Wayland, tema Fluent Round oscuro</li>
+      <li>Touchpad con scroll natural y tap-to-click de fábrica</li>
+      <li>Tablets: rotación automática, teclado en pantalla, lápiz (Xournal++)</li>
+      <li>Panel con auto-ocultar, marca Yaya en GRUB, splash y login</li>
+    </ul></div>
+    <div class="card"><h3>Aplicaciones</h3><ul>
+      <li><b>Firefox ESR</b> con uBlock Origin</li>
+      <li><b>LibreOffice</b>, Thunderbird, VLC con códecs</li>
+      <li>Impresoras y escáneres listos (CUPS, HPLIP, Skanpage)</li>
+      <li>Fuentes completas, Bluetooth, NetworkManager</li>
+    </ul></div>
+    <div class="card"><h3>Lo que no trae</h3><ul>
+      <li>Telemetría, cuentas en la nube, publicidad</li>
+      <li>Software de pago o suscripciones</li>
+      <li>Bloatware: solo lo que usa una persona real</li>
+      <li>Sorpresas: es Debian, se administra como Debian</li>
+    </ul></div>
+  </div>
+</section>
+
+<section>
+  <h2>Requisitos</h2>
+  <div class="tablewrap"><table>
+    <tr><th>Procesador</th><td>64 bits x86 (amd64). Intel o AMD de 2010 en adelante.</td></tr>
+    <tr><th>Memoria</th><td>4 GB funciona; 8 GB recomendado.</td></tr>
+    <tr><th>Disco</th><td>25 GB libres. SSD recomendado.</td></tr>
+    <tr><th>Arranque</th><td>UEFI o BIOS heredado. Desactiva Secure Boot si no arranca.</td></tr>
+    <tr><th>Medio</th><td>Memoria USB de 4 GB o más (se borra por completo).</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>Instalar</h2>
+  <ol class="steps">
+    <li><h3>Graba la ISO en un USB</h3>
+      <p class="fine">Linux / macOS (reemplaza <code>/dev/sdX</code> por tu USB; <code>lsblk</code> o <code>diskutil list</code> para encontrarlo):</p>
+<pre><span class="p">$</span> sudo dd if=yaya-os-2.0-amd64.iso of=/dev/sdX bs=4M status=progress oflag=sync</pre>
+      <p class="fine">Windows: <a href="https://rufus.ie">Rufus</a> en modo «imagen DD», o <a href="https://etcher.balena.io">balenaEtcher</a>. También funciona con <a href="https://www.ventoy.net">Ventoy</a>.</p></li>
+    <li><h3>Arranca desde el USB</h3>
+      <p class="fine">Enciende la máquina con el USB puesto y elige el USB en el menú de arranque (F12, F9, Esc o Del según la marca). Entras a una sesión en vivo: puedes probar todo sin tocar tu disco.</p></li>
+    <li><h3>Ejecuta «Instalar Yaya OS»</h3>
+      <p class="fine">En el escritorio en vivo abre <b>Instalar Yaya OS</b>. Te pide Wi-Fi (opcional), idioma, zona horaria, disco y usuario. Tarda entre 5 y 15 minutos. Al reiniciar, saca el USB.</p></li>
+  </ol>
+</section>
+
+<section id="verificar">
+  <h2>Verificar la descarga</h2>
+  <p class="fine">Una ISO corrupta o manipulada instala cualquier cosa. Verifica antes de grabar: primero la integridad (SHA-256), después la autoría (firma GPG).</p>
+<pre><span class="c"># 1. integridad</span>
+<span class="p">$</span> sha256sum -c yaya-os-2.0-amd64.iso.sha256
+yaya-os-2.0-amd64.iso: OK
+
+<span class="c"># 2. autoría: importa la llave y verifica la firma</span>
+<span class="p">$</span> curl -fsSLO https://yaya.tech/os/yaya-os-release-key.asc
+<span class="p">$</span> gpg --import yaya-os-release-key.asc
+<span class="p">$</span> gpg --verify yaya-os-2.0-amd64.iso.asc yaya-os-2.0-amd64.iso
+gpg: Good signature from "Yaya OS Release Signing Key &lt;releases@yaya.tech&gt;"</pre>
+  <p class="fine">Huella de la llave de firma (ed25519, vence 2028-07-22):<br><code>F22F 7158 D60A 813D D14F  174B 863B 0B13 3BFC FECF</code></p>
+</section>
+
+<section>
+  <h2>Libre de verdad</h2>
+  <p>Yaya OS se construye con <code>live-build</code> a partir de paquetes Debian sin modificar. Todo lo que añadimos —tema, instalador, ajustes— es un puñado de scripts que puedes leer en diez minutos. El código vive en nuestro propio git y en GitHub:</p>
+  <p><a href="https://libre.yaya.tech/yaya/yaya-os">libre.yaya.tech/yaya/yaya-os</a> · <a href="https://github.com/libr3andr3/yaya-os">github.com/libr3andr3/yaya-os</a></p>
+  <p class="fine">¿Lo instalaste en una máquina rara y algo no funcionó? Escribe a <a href="mailto:andre@yaya.tech">andre@yaya.tech</a> con la marca, modelo y qué falló. Los arreglos por hardware entran en la siguiente ISO.</p>
+</section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>Yaya Tech PBC · Yaya OS es software libre; Debian es marca de Software in the Public Interest, Inc. Sin garantía, como todo software libre.</div>
+    <div><a href="/">yaya.tech</a> · <a href="https://agento.ceo">agento.ceo</a> · <a href="https://yaya.cash">yaya.cash</a> · <a href="/privacidad">privacidad</a> · <a href="/terminos">términos</a> · <a href="/reclamaciones">libro de reclamaciones</a></div>
+  </div>
+</footer>
+</body>
+</html>
