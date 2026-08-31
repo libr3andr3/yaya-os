@@ -96,8 +96,7 @@ printf '%s \\n \\l\n\n' "${OS_NAME} ${OS_VERSION}" > /etc/issue
 printf '%s\n' "${OS_NAME} ${OS_VERSION}"           > /etc/issue.net
 cat > /etc/motd <<EOF
 
-  ${OS_NAME} — soberanía digital sobre hardware honesto
-  Soporte: ${OS_SUPPORT}   ·   Wallets: Electrum (BTC) · Feather (XMR)
+  ${OS_NAME} — yaya.tech — sovereign technology for all
 
 EOF
 

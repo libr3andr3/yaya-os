@@ -103,6 +103,11 @@ firmware-linux-free
 firmware-linux-nonfree
 firmware-iwlwifi
 firmware-realtek
+firmware-atheros
+firmware-misc-nonfree
+firmware-sof-signed
+intel-microcode
+amd64-microcode
 network-manager
 sudo
 locales
