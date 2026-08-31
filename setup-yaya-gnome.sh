@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # ============================================================
 # Yaya OS — GNOME (Wayland) + GDM3
-#   · Reemplaza a Plasma/SDDM (setup-yaya-plasma.sh queda como
-#     referencia histórica).
+#   · Reemplaza a Plasma/SDDM (el kit Plasma vive en el historial de git).
 #   · Wayland por defecto (mejor táctil/gestos); GDM ofrece la
 #     sesión "GNOME on Xorg" como alternativa.
 #   · Adwaita oscuro + acento púrpura (el vibe Yaya).

@@ -2,7 +2,7 @@
 
 Graphical installer for Yaya OS, replacing the old debian-installer preseed.
 International and interactive: the user chooses country/region, timezone,
-language, and keyboard layout (US by default). Desktop is **Cinnamon**.
+language, and keyboard layout (US by default). Desktop is **GNOME**.
 
 ## Layout
 
@@ -12,7 +12,7 @@ calamares/
   modules/*.conf         # per-module config (locale, keyboard, partition, …)
   branding/yaya/         # branding.desc, stylesheet.qss, show.qml (slideshow)
   setup-yaya-calamares.sh# chroot hook: installs Calamares + deploys this kit
-../setup-yaya-cinnamon.sh# chroot hook: Cinnamon desktop + LightDM (replaces XFCE)
+../setup-yaya-gnome.sh   # chroot hook: GNOME desktop + GDM3
 ```
 
 At build time `yaya-flash.sh` copies this tree into the live chroot at
@@ -38,9 +38,6 @@ Product name/version pulled from the Yaya OS `os-release`.
 
 ## Notes / follow-ups
 
-- The old XFCE "Windows-10 look" (`setup-yaya-win10.sh`, `skel/`) is **no longer
-  wired in**; Cinnamon ships its own shell. Those files remain in the kit for
-  reference. If you want a themed Cinnamon, add a Cinnamon-specific skel/dconf.
-- `installer/preseed.cfg` and the `yaya-*.hook.binary` d-i hooks are now unused.
-- Originals backed up on the node as `*.bak-precalamares`.
+- Earlier desktop kits (XFCE/Win10, Cinnamon, Plasma) and the old d-i
+  preseed + binary hooks were removed from the tree; they live in git history.
 - Debian Trixie ships Calamares 3.3.14 (branding format used here is compatible).

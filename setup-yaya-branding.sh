@@ -169,7 +169,7 @@ fi
 update-initramfs -u 2>/dev/null || true
 # NOTA: en el chroot LIVE no existe /etc/grub.d ni /etc/default/grub (grub no
 # está instalado). Toda la config del GRUB instalado se hace en yaya-postinstall,
-# que el preseed corre CON `in-target` cuando grub YA está instalado en el disco.
+# que Calamares corre vía shellprocess cuando grub YA está instalado en el disco.
 
 # --- Post-instalación: se ejecuta en el sistema INSTALADO (in-target) ---
 #   · grub silencioso + timeout + magenta  · apt sin medio live

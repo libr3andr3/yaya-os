@@ -1,82 +1,70 @@
 # Yaya OS
 
+ISO Debian (trixie) live + instalable para hardware refurbished: escritorio
+**GNOME (Wayland) + GDM3**, instalador gráfico **Calamares**, identidad de
+marca **Yaya Tech** completa (splash de arranque, greeter, os-release,
+terminal). Se construye con `live-build` vía `yaya-flash.sh`.
+
 > **2026-08-31:** escritorio = **GNOME (Wayland) + GDM3** (`setup-yaya-gnome.sh`).
 > Splash de Plymouth = **alien centrado** sobre negro; alien también en el greeter
 > de GDM. Adwaita oscuro + acento púrpura, AppIndicator para las wallets.
-> Plasma/Fluent (`setup-yaya-plasma.sh`) queda como referencia histórica.
-> Hook de live-build: renombrar a `0500-yaya-gnome.hook.chroot` en el nodo de build.
-
-> **2026-08-22 (histórico):** escritorio = **KDE Plasma 6 (Wayland) + SDDM + tema Fluent Round**
-> (`setup-yaya-plasma.sh`). Cinnamon/XFCE quedan como referencia histórica.
-> Apps KDE (Dolphin, Okular, Gwenview, Kate, Discover…) + LibreOffice, Firefox+uBlock,
-> VLC, Thunderbird, CUPS. `fastfetch` se ejecuta sólo al escribirlo y renderiza el
-> alien al tamaño de la terminal.
-
-# (histórico) Yaya OS — XFCE Windows 10 Kit
-
-XFCE configurado para verse y comportarse como Windows 10, con **identidad
-de marca Yaya completa** (arranque, greeter, wallpaper, os-release).
-Pensado para hardware refurbished (funciona bien en 4GB RAM) y para
-integrarse a una ISO Debian con `live-build`.
+>
+> Historial de escritorios: XFCE/Win10 → Cinnamon → KDE Plasma 6 → GNOME.
+> Los kits anteriores (win10/skel XFCE, cinnamon, plasma/Fluent, preseed d-i)
+> viven en el historial de git; el árbol solo lleva lo que se construye hoy.
 
 ## Contenido
 
 ```
-setup-yaya-win10.sh          # apariencia Win10 (tema GTK, iconos, panel)
-setup-yaya-branding.sh       # BRANDING DE ARRANQUE: os-release, hostname,
-                             #   splash Plymouth (lockup), logo del SO (alien)
-setup-yaya-wallets.sh        # Electrum (BTC) + Feather (XMR) -> nodos yaya.cash
-setup-yaya-touch.sh          # (opcional) soporte táctil para XFCE
-setup-yaya-fastfetch.sh      # fastfetch con marca Yaya: alien en la terminal,
-                             #   config global + saludo al abrir terminal
+yaya-flash.sh                # build de la ISO (live-build) + flasheo a USB
+web-install.sh               # curl yaya.tech | bash — baja ISO firmada y flashea
+setup-yaya-gnome.sh          # hook 0500: GNOME + GDM3, dconf Yaya, alien en greeter
+setup-yaya-wallets.sh        # hook 0510 (DESACTIVADO): Electrum/Feather -> yaya.cash
+setup-yaya-branding.sh       # hook 0520: os-release, Plymouth (alien), iconos
+setup-yaya-touch.sh          # hook 0530: táctil (auto-rotación, OSK, gestos)
+setup-yaya-fastfetch.sh      # hook 0535: fastfetch con marca (alien en terminal)
+setup-yaya-apps.sh           # hook 0540: Xournal++, Firefox ESR + uBlock
+setup-yaya-desktop.sh        # hook 0545: Flathub, unattended-upgrades, CUPS
+setup-yaya-system.sh         # hook 0555: bluetooth, sudoers, limpieza
+calamares/                   # hook 0560: instalador gráfico (ver su README)
+yaya-desktop-apps.list       # apps "daily driver" (LibreOffice, VLC, Thunderbird…)
+branding/                    # marca vectorizada (SVG puro, sin fuentes)
+  yaya-logo.svg              #   alien solo (logo del SO y splash de Plymouth)
+  yaya-logo-full.svg         #   lockup alien + "Yaya Tech"
+  yaya-boot-1920x1080.svg    #   splash del menú GRUB
+  yaya-boot-640x480.svg      #   splash del menú isolinux
+fastfetch/                   # assets de terminal (config, alien ASCII, generador)
 yaya-webcam.sh               # puente DSLR -> /dev/video42 con banner Yaya
-fastfetch/                   # assets de terminal
-  config.jsonc               #   default del sistema (-> /etc/fastfetch)
-  webcam.jsonc / -compact    #   banner del dashboard de yaya-webcam
-  yaya-logo*.txt             #   alien ASCII fijo (fallback)
-  yaya-logo-gen.py           #   re-renderiza el alien al tamaño de terminal
-branding/                    # marca REAL vectorizada (Yaya Tech), SVG puro
-  yaya-logo.svg              #   alien solo (logo del SO)
-  yaya-logo-full.svg         #   lockup alien + "Yaya Tech" (transparente)
-  yaya-boot-1920x1080.svg    #   splash de arranque GRUB (negro + lockup)
-  yaya-boot-640x480.svg      #   splash de arranque isolinux
-skel/                        # config por defecto para nuevos usuarios
-  .config/xfce4/
-    panel/whiskermenu-1.rc                        # menú Inicio
-    xfconf/xfce-perchannel-xml/
-      xfce4-panel.xml                             # panel inferior estilo Win10
-      xsettings.xml                               # tema GTK + iconos + fuente
-      xfwm4.xml                                   # decoración de ventanas + Aero Snap
-      xfce4-keyboard-shortcuts.xml                # Super=Inicio, Win+E, Win+flechas
+web/os/                      # página de descarga yaya.tech/os
+docs/                        # visión, bootstrap de máquinas nuevas, screenshots
 ```
+
+## Escritorio (setup-yaya-gnome.sh)
+
+GNOME en Wayland con GDM3, sin autologin. Defaults vía dconf: Adwaita
+oscuro + acento púrpura, tap-to-click y scroll natural, favoritos Yaya en
+el dash, extensión AppIndicator (bandeja para las wallets), GNOME Software
+sin descargas automáticas (unattended-upgrades ya cubre seguridad). El
+greeter de GDM muestra el alien en blanco (perfil dconf `gdm`).
 
 ## Branding de arranque (setup-yaya-branding.sh)
 
 El logo real de **Yaya Tech** (alien con seña de paz) fue vectorizado del
-PNG original a SVG puro con VTracer — incluido el texto "Yaya Tech", que
-son **trazos vectoriales, no `<text>`**: nítido a cualquier resolución y
-sin depender de ninguna fuente. Aplica:
+PNG original a SVG puro con VTracer — trazos vectoriales, no `<text>`:
+nítido a cualquier resolución y sin depender de ninguna fuente. Aplica:
 
 - **Identidad del sistema**: `/etc/os-release` (`LOGO=yaya-logo`),
   `/etc/lsb-release`, `hostname=yaya`, `/etc/issue`, `/etc/motd`.
-- **Splash de arranque**: tema Plymouth `yaya` — el lockup completo
-  (alien + "Yaya Tech") **centrado** sobre negro, escalado al tamaño de
-  pantalla en tiempo de arranque (nítido en cualquier resolución).
-- **Logo del SO = solo el alien**: se instala como icono `distributor-logo`
-  / `start-here`, así que el botón Inicio de Whisker muestra el alien.
-- **Menú de arranque** (isolinux/GRUB): mismo lockup sobre negro
-  (lo pone `yaya-flash.sh`).
+- **Splash de arranque**: tema Plymouth `yaya` — el **alien centrado**
+  sobre negro (~26% del lado menor de la pantalla), con puntos de progreso
+  y prompt de LUKS debajo.
+- **Logo del SO = solo el alien**: instalado como icono `distributor-logo`
+  / `start-here` (aparece en Ajustes → Acerca de).
+- **Menú de arranque** (isolinux/GRUB): lockup sobre negro (lo pone
+  `yaya-flash.sh`).
 
-**No toca XFCE**: deliberadamente no cambia wallpaper, tema, panel ni
-greeter — solo el arranque y la identidad del sistema. Los SVG se
-rasterizan en el chroot con `rsvg-convert` (instalado y purgado por el
-propio hook). Corre como hook `0520`.
-
-### Regenerar los SVG desde el PNG original
-
-Los assets de `branding/` ya están vectorizados y versionados. Si cambia
-el logo original, se re-vectoriza con VTracer (ver el PNG fuente en
-`~/Downloads/yayatech.png`). No hace falta para construir la ISO.
+Los SVG se rasterizan en el chroot con `rsvg-convert` (instalado y purgado
+por el propio hook).
 
 ## Fastfetch con marca (setup-yaya-fastfetch.sh)
 
@@ -96,45 +84,18 @@ junto a la info del sistema, en el verde-teal de la marca (`38;5;79`).
   ffmpeg en la barra de estado. Los deps de streaming no van en la ISO
   base; el script indica cómo instalarlos si faltan.
 
-Hook live-build: `config/hooks/live/0535-yaya-fastfetch.hook.chroot`.
-
-## Táctil / pantallas táctiles
-
-Ver **[TOUCHSCREEN.md](TOUCHSCREEN.md)**. Resumen: XFCE se queda como
-imagen por defecto (la más liviana) y `setup-yaya-touch.sh` le agrega
-teclado en pantalla + auto-rotación + gestos para los convertibles. Para
-una flota mayoritariamente táctil, la recomendación es un **build aparte
-con KDE Plasma 6** (mismo branding, mejor táctil), no GNOME.
-
-## Instalación manual (una máquina)
+## Construir la ISO
 
 ```bash
-sudo ./setup-yaya-win10.sh
-# cerrar sesión y volver a entrar
+sudo ./yaya-flash.sh                # construye ISO y flashea a USB
+sudo ./yaya-flash.sh --build-only   # solo construye
+sudo ./yaya-flash.sh --flash-only yaya-os.iso
 ```
 
-## Integración con live-build
-
-```bash
-# En tu árbol de live-build:
-cp setup-yaya-win10.sh config/hooks/live/0500-yaya-win10.hook.chroot
-chmod +x config/hooks/live/0500-yaya-win10.hook.chroot
-cp -r skel config/includes.chroot/etc/skel-extra   # y ajustar ruta en el hook
-# o más simple: meter skel/ directo en config/includes.chroot/etc/skel/
-```
-
-Recomendado: en producción, empaqueta el tema y los iconos como .deb
-propios (yaya-theme-win10) en tu repo APT en vez de clonar de GitHub en
-el hook — build reproducible y sin dependencia de red externa.
-
-## Qué replica de Windows 10
-
-- Panel único inferior de 40px: Inicio | tareas agrupadas | systray | volumen | reloj con fecha
-- Tecla Windows abre el menú Inicio (Whisker)
-- Win+E → explorador, Win+L → bloquear, Win+flechas → snap de ventanas
-- Alt+Tab, Alt+F4
-- Botones de ventana a la derecha (min/max/cerrar), snap al arrastrar a bordes
-- Tema GTK "Windows-10" y set de iconos "Windows-10" de B00merang (GPL)
+Host Debian/Ubuntu; instala `live-build` si falta. El script arma el árbol
+de live-build desde cero en cada build (los hooks se copian del kit, la
+caché apt se conserva) y al flashear añade una partición de persistencia
+en el espacio libre del USB.
 
 ## Wallets (setup-yaya-wallets.sh) — NO incluido en la ISO por ahora
 
@@ -166,11 +127,3 @@ Es el trade-off custodial-by-default. Ambas wallets permiten cambiar a
 nodo propio en Configuración — ese es el camino sovereign-by-choice.
 Considera ofrecer el nodo también como hidden service (.onion): Feather
 lo soporta nativo por Tor.
-
-## Licencias — importante para distribución comercial
-
-- Tema GTK: B00merang-Project/Windows-10 — GPL-3.0 ✔ redistribuible
-- Iconos: B00merang-Artwork/Windows-10 — GPL ✔ redistribuible
-- NO incluir: Segoe UI, wallpapers de Microsoft, logo de Windows.
-  Este kit usa Open Sans (SIL OFL) como reemplazo de Segoe UI.
-- Verifica cada asset adicional que agregues antes de meterlo a la ISO.
