@@ -1,6 +1,12 @@
 # Yaya OS
 
-> **2026-08-22:** escritorio = **KDE Plasma 6 (Wayland) + SDDM + tema Fluent Round**
+> **2026-08-31:** escritorio = **GNOME (Wayland) + GDM3** (`setup-yaya-gnome.sh`).
+> Splash de Plymouth = **alien centrado** sobre negro; alien también en el greeter
+> de GDM. Adwaita oscuro + acento púrpura, AppIndicator para las wallets.
+> Plasma/Fluent (`setup-yaya-plasma.sh`) queda como referencia histórica.
+> Hook de live-build: renombrar a `0500-yaya-gnome.hook.chroot` en el nodo de build.
+
+> **2026-08-22 (histórico):** escritorio = **KDE Plasma 6 (Wayland) + SDDM + tema Fluent Round**
 > (`setup-yaya-plasma.sh`). Cinnamon/XFCE quedan como referencia histórica.
 > Apps KDE (Dolphin, Okular, Gwenview, Kate, Discover…) + LibreOffice, Firefox+uBlock,
 > VLC, Thunderbird, CUPS. `fastfetch` se ejecuta sólo al escribirlo y renderiza el

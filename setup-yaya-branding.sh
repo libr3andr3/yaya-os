@@ -2,7 +2,7 @@
 # ============================================================
 # Yaya OS — Branding de ARRANQUE (no toca XFCE)
 #   · Identidad del sistema: os-release, hostname, issue, motd
-#   · Splash de arranque (Plymouth): lockup Yaya Tech CENTRADO
+#   · Splash de arranque (Plymouth): ALIEN centrado sobre negro
 #   · Logo del SO = solo el alien (icono distributor-logo)
 #
 # Deliberadamente NO cambia: wallpaper, tema, panel ni greeter de
@@ -101,10 +101,10 @@ cat > /etc/motd <<EOF
 
 EOF
 
-echo "==> [5/6] Splash de arranque (Plymouth): lockup Yaya Tech centrado"
-# Logo (lockup transparente) a alta resolución -> el script lo centra y
-# escala al tamaño de pantalla, nítido en cualquier resolución.
-render "$ART/yaya-logo-full.svg" 2000 1104 "$PLYMOUTH_DIR/logo.png"
+echo "==> [5/6] Splash de arranque (Plymouth): alien centrado"
+# Alien (marca sola, sin texto) a alta resolución -> el script lo centra
+# y escala al tamaño de pantalla, nítido en cualquier resolución.
+render "$ART/yaya-logo.svg" 1024 1024 "$PLYMOUTH_DIR/logo.png"
 cat > "$PLYMOUTH_DIR/yaya.plymouth" <<EOF
 [Plymouth Theme]
 Name=Yaya OS
@@ -121,10 +121,11 @@ sw = Window.GetWidth();  sh = Window.GetHeight();
 Window.SetBackgroundTopColor(0.0, 0.0, 0.0);
 Window.SetBackgroundBottomColor(0.0, 0.0, 0.0);
 
-# --- lockup centrado, escalado al ~48% del ancho de pantalla ---
+# --- alien centrado, escalado al ~26% del lado menor de la pantalla ---
 logo = Image("logo.png");
 lw = logo.GetWidth();  lh = logo.GetHeight();
-target_w = sw * 0.48;
+m = sh; if (sw < sh) m = sw;
+target_w = m * 0.26;
 scale = target_w / lw;
 logo = logo.Scale(lw * scale, lh * scale);
 logo_spr = Sprite(logo);
@@ -186,7 +187,7 @@ rm -f /usr/share/applications/yaya-install.desktop /usr/bin/yaya-install \
 for h in /home/* /root; do
   rm -f "$h/Desktop/yaya-install.desktop" "$h/.config/autostart/yaya-install.desktop"
 done
-# (sin autologin: SDDM preselecciona al usuario creado)
+# (sin autologin: GDM lista los usuarios locales)
 
 # 2) GRUB instalado: arranque silencioso (sin verbose) + timeout corto
 if [ -f /etc/default/grub ]; then
@@ -221,5 +222,5 @@ apt-get autoremove -y >/dev/null 2>&1 || true
 echo ""
 echo "Branding de arranque aplicado (escritorio intacto):"
 echo "  Identidad : ${OS_NAME} ${OS_VERSION} (${OS_CODENAME})"
-echo "  Splash    : Plymouth 'yaya' — lockup Yaya Tech centrado sobre negro"
+echo "  Splash    : Plymouth 'yaya' — alien centrado sobre negro"
 echo "  Logo SO   : alien (icono distributor-logo / start-here)"

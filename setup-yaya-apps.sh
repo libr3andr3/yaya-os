@@ -17,7 +17,7 @@ apt-get install -y --no-install-recommends xournalpp \
 
 # Xournal++ bajo Xwayland: con GTK3 en Wayland los botones del lápiz
 # (borrador / selección) no llegan bien; por X11 funcionan como deben.
-# Plasma sigue gestionando la tableta; sólo cambia el backend de GTK.
+# GNOME sigue gestionando la tableta; sólo cambia el backend de GTK.
 install -d /usr/local/share/applications
 XPP=$(ls /usr/share/applications/com.github.xournalpp.xournalpp.desktop /usr/share/applications/xournalpp.desktop 2>/dev/null | head -1 || true)
 if [ -n "$XPP" ]; then
