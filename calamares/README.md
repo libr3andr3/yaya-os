@@ -2,7 +2,7 @@
 
 Graphical installer for Yaya OS, replacing the old debian-installer preseed.
 International and interactive: the user chooses country/region, timezone,
-language, and keyboard layout (US by default). Desktop is **GNOME**.
+language, and keyboard layout (US by default). Desktop is **KDE Plasma 6**.
 
 ## Layout
 
@@ -12,7 +12,7 @@ calamares/
   modules/*.conf         # per-module config (locale, keyboard, partition, …)
   branding/yaya/         # branding.desc, stylesheet.qss, show.qml (slideshow)
   setup-yaya-calamares.sh# chroot hook: installs Calamares + deploys this kit
-../setup-yaya-gnome.sh   # chroot hook: GNOME desktop + GDM3
+../setup-yaya-plasma.sh  # chroot hook: Plasma 6 desktop + SDDM + Fluent Round
 ```
 
 At build time `yaya-flash.sh` copies this tree into the live chroot at

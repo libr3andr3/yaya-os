@@ -118,10 +118,10 @@ EOF
   echo "==> Apps de escritorio (LibreOffice, VLC, impresión, tienda...)"
   cp "$KIT_DIR/yaya-desktop-apps.list" config/package-lists/yaya-desktop.list.chroot
 
-  echo "==> Integrando hooks del kit (GNOME + branding + apps + Calamares)"
+  echo "==> Integrando hooks del kit (Plasma + branding + apps + Calamares)"
   mkdir -p config/hooks/live
-  # Escritorio GNOME (Wayland) + GDM3 (reemplaza a Plasma/SDDM).
-  cp "$KIT_DIR/setup-yaya-gnome.sh"     config/hooks/live/0500-yaya-gnome.hook.chroot
+  # Escritorio KDE Plasma 6 + SDDM + Fluent Round (vuelta desde GNOME/GDM3).
+  cp "$KIT_DIR/setup-yaya-plasma.sh"    config/hooks/live/0500-yaya-plasma.hook.chroot
   # Wallets (Electrum/Feather -> nodos yaya.cash): DESACTIVADO hasta que la
   # infraestructura esté lista. Reactivar descomentando:
   # cp "$KIT_DIR/setup-yaya-wallets.sh"   config/hooks/live/0510-yaya-wallets.hook.chroot

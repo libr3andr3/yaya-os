@@ -1,24 +1,25 @@
 # Yaya OS
 
 ISO Debian (trixie) live + instalable para hardware refurbished: escritorio
-**GNOME (Wayland) + GDM3**, instalador gráfico **Calamares**, identidad de
-marca **Yaya Tech** completa (splash de arranque, greeter, os-release,
+**KDE Plasma 6 (Wayland) + SDDM**, instalador gráfico **Calamares**, identidad
+de marca **Yaya Tech** completa (splash de arranque, greeter, os-release,
 terminal). Se construye con `live-build` vía `yaya-flash.sh`.
 
-> **2026-08-31:** escritorio = **GNOME (Wayland) + GDM3** (`setup-yaya-gnome.sh`).
-> Splash de Plymouth = **alien centrado** sobre negro; alien también en el greeter
-> de GDM. Adwaita oscuro + acento púrpura, AppIndicator para las wallets.
+> **2026-09-01:** vuelta a **KDE Plasma 6 + SDDM + Fluent Round**
+> (`setup-yaya-plasma.sh`), conservando lo bueno de la era GNOME: codecs HW
+> (VA-API), HEIC/WebP, firmware SOF/microcode, Epson/Brother, udisks2, 7z/rar,
+> y el splash de Plymouth con el **alien centrado** sobre negro.
 >
-> Historial de escritorios: XFCE/Win10 → Cinnamon → KDE Plasma 6 → GNOME.
-> Los kits anteriores (win10/skel XFCE, cinnamon, plasma/Fluent, preseed d-i)
-> viven en el historial de git; el árbol solo lleva lo que se construye hoy.
+> Historial de escritorios: XFCE/Win10 → Cinnamon → KDE Plasma 6 → GNOME →
+> KDE Plasma 6. Los kits anteriores (win10/skel XFCE, cinnamon, gnome, preseed
+> d-i) viven en el historial de git; el árbol solo lleva lo que se construye hoy.
 
 ## Contenido
 
 ```
 yaya-flash.sh                # build de la ISO (live-build) + flasheo a USB
 web-install.sh               # curl yaya.tech | bash — baja ISO firmada y flashea
-setup-yaya-gnome.sh          # hook 0500: GNOME + GDM3, dconf Yaya, alien en greeter
+setup-yaya-plasma.sh         # hook 0500: Plasma 6 + SDDM + Fluent Round, alien en el panel
 setup-yaya-wallets.sh        # hook 0510 (DESACTIVADO): Electrum/Feather -> yaya.cash
 setup-yaya-branding.sh       # hook 0520: os-release, Plymouth (alien), iconos
 setup-yaya-touch.sh          # hook 0530: táctil (auto-rotación, OSK, gestos)
@@ -39,20 +40,19 @@ web/os/                      # página de descarga yaya.tech/os
 docs/                        # visión, bootstrap de máquinas nuevas, screenshots
 ```
 
-## Escritorio (setup-yaya-gnome.sh)
+## Escritorio (setup-yaya-plasma.sh)
 
-GNOME en Wayland con GDM3, sin autologin. Defaults vía dconf: Adwaita
-oscuro + acento púrpura, tap-to-click y scroll natural, favoritos Yaya en
-el dash, extensión AppIndicator (bandeja para las wallets), GNOME Software
-sin descargas automáticas (unattended-upgrades ya cubre seguridad). El
-greeter de GDM muestra el alien en blanco (perfil dconf `gdm`).
+KDE Plasma 6 en Wayland con SDDM, sin autologin (usuario recordado en el
+login). Tema global **Fluent Round dark** (vinceliuice): Plasma, ventanas
+(Aurorae), Kvantum, iconos Fluent, GTK Fluent y SDDM Fluent, con el alien
+blanco como botón de inicio (Kickoff), en el splash de Plasma y en el
+greeter. Panel auto-hide, reloj y show-desktop estándar, touchpad con
+scroll natural + tap-to-click (`/etc/xdg/kcminputrc`), KWallet apagado,
+Discover sin notificaciones agresivas de updates (unattended-upgrades ya
+cubre seguridad).
 
-Para gente que viene de Windows (extensiones Debian, activadas por
-defecto y apagables en Extensiones): **Dash to Panel** (barra inferior),
-**ArcMenu** (menú de inicio con el alien) y **Desktop Icons NG** (iconos
-en el escritorio). Wallpaper por defecto: playa
-(`branding/yaya-beach.jpg`, Pexels 457882, licencia Pexels libre de
-regalías).
+`branding/yaya-beach.jpg` (Pexels 457882, licencia Pexels libre de
+regalías) queda en el kit por si se quiere como wallpaper por defecto.
 
 ## Branding de arranque (setup-yaya-branding.sh)
 

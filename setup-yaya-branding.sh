@@ -186,7 +186,7 @@ rm -f /usr/share/applications/yaya-install.desktop /usr/bin/yaya-install \
 for h in /home/* /root; do
   rm -f "$h/Desktop/yaya-install.desktop" "$h/.config/autostart/yaya-install.desktop"
 done
-# (sin autologin: GDM lista los usuarios locales)
+# (sin autologin: SDDM preselecciona al usuario creado)
 
 # 2) GRUB instalado: arranque silencioso (sin verbose) + timeout corto
 if [ -f /etc/default/grub ]; then

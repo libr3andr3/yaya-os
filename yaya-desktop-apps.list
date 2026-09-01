@@ -1,22 +1,21 @@
-# Yaya OS — "daily driver" app set for non-technical users (GNOME edition).
+# Yaya OS — "daily driver" app set for non-technical users (KDE Plasma edition).
 # Installed via live-build package list (config/package-lists/yaya-desktop.list.chroot).
-# Desktop core apps (Nautilus, Console, Text Editor, Evince, Loupe, File Roller,
-# Calculator, Software, Baobab, System Monitor, Disks, GParted) are installed
-# by setup-yaya-gnome.sh.
+# Desktop core apps (Dolphin, Konsole, Kate, Okular, Gwenview, Ark, KCalc,
+# Spectacle, Discover, Filelight, System Monitor, Partition Manager,
+# Print Manager) are installed by setup-yaya-plasma.sh.
 
 # --- Office & documents ---
 libreoffice-writer
 libreoffice-calc
 libreoffice-impress
-libreoffice-gtk3
+libreoffice-kf6
 libreoffice-l10n-es
 hunspell-en-us
 hunspell-es
-gnome-calendar
 
 # --- Photos, video, music, camera ---
 vlc
-gnome-snapshot
+kamoso
 gstreamer1.0-plugins-good
 gstreamer1.0-plugins-bad
 gstreamer1.0-plugins-ugly
@@ -28,9 +27,9 @@ intel-media-va-driver-non-free
 # Intel Gen7 y anteriores (Bay Trail/Haswell — los Atom ASUS de la flota)
 i965-va-driver
 mesa-va-drivers
-# cámara/screencast vía PipeWire (Snapshot, compartir pantalla en Wayland)
+# cámara/screencast vía PipeWire (Kamoso, compartir pantalla en Wayland)
 gstreamer1.0-pipewire
-# fotos de iPhone (HEIC) y WebP en Loupe/Nautilus
+# fotos de iPhone (HEIC) y WebP en apps GTK (Xournal++, Firefox)
 heif-gdk-pixbuf
 heif-thumbnailer
 webp-pixbuf-loader
@@ -47,7 +46,7 @@ printer-driver-gutenprint
 printer-driver-escpr
 printer-driver-brlaser
 hplip
-simple-scan
+skanpage
 sane-airscan
 
 # --- Hardware / laptop ---
@@ -56,11 +55,13 @@ ntfs-3g
 exfatprogs
 fwupd
 systemd-timesyncd
-# teléfonos Android (MTP), cámaras y shares de red en Nautilus
+# montaje de discos/USB/CD (Solid/Dolphin y udisksctl)
+udisks2
+# monitor de volúmenes + montaje para apps GTK (diálogo de guardar de
+# Xournal++/Firefox: sin gvfs no ven ni montan discos externos)
+gvfs
 gvfs-backends
 gvfs-fuse
-# montaje de discos/USB/CD (udisksctl + sidebar de Files)
-udisks2
 
 # --- Software store & updates ---
 flatpak
@@ -76,6 +77,6 @@ fonts-crosextra-caladea
 # --- System utilities ---
 unzip
 zip
-# .7z y .rar (File Roller los abre con estos instalados)
+# .7z y .rar (Ark los abre con estos instalados)
 7zip
 unrar-free
