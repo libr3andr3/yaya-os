@@ -29,7 +29,7 @@ apt-get install -y --no-install-recommends \
   gnome-control-center gnome-tweaks \
   gnome-shell-extension-appindicator \
   gnome-shell-extension-dash-to-panel \
-  gnome-shell-extension-arc-menu \
+  gnome-shell-extension-arc-menu gnome-menus \
   gnome-shell-extension-desktop-icons-ng \
   network-manager-gnome \
   xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
