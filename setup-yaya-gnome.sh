@@ -111,6 +111,11 @@ favorite-apps=['firefox-esr.desktop','org.gnome.Nautilus.desktop','org.gnome.Con
 menu-button-icon='Custom_Icon'
 custom-menu-button-icon='/usr/share/yaya/branding/yaya-logo-white.svg'
 
+# Un solo botón de inicio (el alien): el botón de 9 puntos de Dash to
+# Panel duplica la función y confunde — fuera.
+[org/gnome/shell/extensions/dash-to-panel]
+show-show-apps-button=false
+
 # Software: sin descargas automáticas (unattended-upgrades ya hace seguridad)
 [org/gnome/software]
 download-updates=false
