@@ -57,6 +57,8 @@ systemd-timesyncd
 # teléfonos Android (MTP), cámaras y shares de red en Nautilus
 gvfs-backends
 gvfs-fuse
+# montaje de discos/USB/CD (udisksctl + sidebar de Files)
+udisks2
 
 # --- Software store & updates ---
 flatpak
