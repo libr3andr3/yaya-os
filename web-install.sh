@@ -12,9 +12,10 @@ BASE="${YAYA_BASE:-https://yaya.tech}"
 ISO_URL="$BASE/yaya-os.iso"
 SIG_URL="$BASE/yaya-os.iso.asc"
 KEY_URL="$BASE/yaya-release.pub.asc"
-# Clave de firma de Yaya OS — PINEADA por huella (el UID de la clave aún dice
-# releases@yaya.sh; añadir un UID @yaya.tech requiere la clave privada):
-FPR="0599115B6BAE51AB1CA37BD819EF40CA504239C8"
+# Clave de firma de Yaya OS — PINEADA por huella.
+# Rotada 2026-09-01: ed25519, UID releases@yaya.tech, expira 2028-08-31.
+# (La clave anterior 0599...39C8 firmó las ISOs hasta 2026-08; retirada.)
+FPR="CD1C9B2C71B0DF066265029554EEE90656008C1A"
 
 mag(){ printf "\033[1;35m%s\033[0m\n" "$*"; }   # magenta (el vibe Yaya)
 ok(){ printf "  \033[32m✔\033[0m %s\n" "$*"; }
