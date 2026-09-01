@@ -110,11 +110,14 @@ favorite-apps=['firefox-esr.desktop','org.gnome.Nautilus.desktop','org.gnome.Con
 [org/gnome/shell/extensions/arcmenu]
 menu-button-icon='Custom_Icon'
 custom-menu-button-icon='/usr/share/yaya/branding/yaya-logo-white.svg'
+custom-menu-button-icon-size=30.0
 
 # Un solo botón de inicio (el alien): el botón de 9 puntos de Dash to
-# Panel duplica la función y confunde — fuera.
+# Panel duplica la función y confunde — fuera. En D2P v68 la visibilidad
+# va en el JSON panel-element-positions (showAppsButton visible=false;
+# el resto son los defaults de D2P). JSON mal formado = D2P usa defaults.
 [org/gnome/shell/extensions/dash-to-panel]
-show-show-apps-button=false
+panel-element-positions='{"0":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"activitiesButton","visible":false,"position":"stackedTL"},{"element":"leftBox","visible":true,"position":"stackedTL"},{"element":"taskbar","visible":true,"position":"stackedTL"},{"element":"centerBox","visible":true,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"dateMenu","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":true,"position":"stackedBR"}]}'
 
 # Software: sin descargas automáticas (unattended-upgrades ya hace seguridad)
 [org/gnome/software]
