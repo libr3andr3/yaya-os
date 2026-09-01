@@ -7,6 +7,12 @@
 #   · Adwaita oscuro + acento púrpura (el vibe Yaya).
 #   · Alien como logo del greeter de GDM (org.gnome.login-screen).
 #   · AppIndicator activado: bandeja para Electrum/Feather.
+#   · Familiar para gente que viene de Windows: barra inferior
+#     (Dash to Panel) + menú de inicio (ArcMenu, icono alien) +
+#     iconos en el escritorio (Desktop Icons NG). Todo apagable
+#     desde Extensiones.
+#   · Wallpaper: playa (branding/yaya-beach.jpg, Pexels 457882,
+#     licencia Pexels — libre de regalías).
 #   · Sin autologin: GDM lista los usuarios locales.
 #
 #   Uso manual:  sudo ./setup-yaya-gnome.sh
@@ -22,6 +28,9 @@ apt-get install -y --no-install-recommends \
   gnome-shell gnome-session gdm3 \
   gnome-control-center gnome-tweaks \
   gnome-shell-extension-appindicator \
+  gnome-shell-extension-dash-to-panel \
+  gnome-shell-extension-arc-menu \
+  gnome-shell-extension-desktop-icons-ng \
   network-manager-gnome \
   xdg-desktop-portal-gnome xdg-desktop-portal-gtk \
   nautilus gnome-console gnome-text-editor gnome-calculator \
@@ -63,7 +72,13 @@ logo='/usr/share/yaya/branding/yaya-logo-white.svg'
 disable-user-list=false
 EOF
 
-echo "==> [3/4] Defaults dconf para usuarios (oscuro, táctil, favoritos, bandeja)"
+echo "==> [3/4] Defaults dconf (oscuro, táctil, favoritos, barra Win-style, playa)"
+# Wallpaper: playa (alta resolución, licencia Pexels)
+if [ -f "$BR/yaya-beach.jpg" ]; then
+  install -Dm644 "$BR/yaya-beach.jpg" /usr/share/backgrounds/yaya/beach.jpg
+else
+  echo "   WARN: falta $BR/yaya-beach.jpg; queda el fondo Adwaita"
+fi
 install -d /etc/dconf/db/local.d
 printf 'user-db:user\nsystem-db:local\n' > /etc/dconf/profile/user
 cat > /etc/dconf/db/local.d/10-yaya <<'EOF'
@@ -72,6 +87,11 @@ cat > /etc/dconf/db/local.d/10-yaya <<'EOF'
 color-scheme='prefer-dark'
 accent-color='purple'
 
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/yaya/beach.jpg'
+picture-uri-dark='file:///usr/share/backgrounds/yaya/beach.jpg'
+picture-options='zoom'
+
 [org/gnome/desktop/peripherals/touchpad]
 tap-to-click=true
 natural-scroll=true
@@ -79,9 +99,17 @@ natural-scroll=true
 [org/gnome/desktop/wm/preferences]
 button-layout='appmenu:minimize,maximize,close'
 
+# Familiar viniendo de Windows: barra inferior + menú inicio + iconos
+# de escritorio (UUIDs verificados de los paquetes Debian)
 [org/gnome/shell]
-enabled-extensions=['appindicatorsupport@rgcjonas.gmail.com']
+enabled-extensions=['appindicatorsupport@rgcjonas.gmail.com','dash-to-panel@jderose9.github.com','arcmenu@arcmenu.com','ding@rastersoft.com']
 favorite-apps=['firefox-esr.desktop','org.gnome.Nautilus.desktop','org.gnome.Console.desktop','org.gnome.TextEditor.desktop','org.gnome.Software.desktop','org.gnome.Settings.desktop']
+
+# ArcMenu con el alien como botón de inicio (best-effort: si la clave
+# cambia upstream, ArcMenu usa su icono por defecto)
+[org/gnome/shell/extensions/arcmenu]
+menu-button-icon='Custom_Icon'
+custom-menu-button-icon='/usr/share/yaya/branding/yaya-logo-white.svg'
 
 # Software: sin descargas automáticas (unattended-upgrades ya hace seguridad)
 [org/gnome/software]
@@ -94,3 +122,5 @@ echo "GNOME + GDM3 listo:"
 echo "   Sesión   : GNOME (Wayland) por defecto; 'GNOME on Xorg' disponible"
 echo "   Greeter  : GDM con alien blanco, lista de usuarios, sin autologin"
 echo "   Defaults : Adwaita oscuro, acento púrpura, tap-to-click, AppIndicator"
+echo "   Win-style: Dash to Panel + ArcMenu (alien) + iconos de escritorio"
+echo "   Fondo    : playa (/usr/share/backgrounds/yaya/beach.jpg)"

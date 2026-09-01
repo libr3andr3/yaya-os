@@ -47,6 +47,13 @@ el dash, extensión AppIndicator (bandeja para las wallets), GNOME Software
 sin descargas automáticas (unattended-upgrades ya cubre seguridad). El
 greeter de GDM muestra el alien en blanco (perfil dconf `gdm`).
 
+Para gente que viene de Windows (extensiones Debian, activadas por
+defecto y apagables en Extensiones): **Dash to Panel** (barra inferior),
+**ArcMenu** (menú de inicio con el alien) y **Desktop Icons NG** (iconos
+en el escritorio). Wallpaper por defecto: playa
+(`branding/yaya-beach.jpg`, Pexels 457882, licencia Pexels libre de
+regalías).
+
 ## Branding de arranque (setup-yaya-branding.sh)
 
 El logo real de **Yaya Tech** (alien con seña de paz) fue vectorizado del
