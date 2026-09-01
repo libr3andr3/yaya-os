@@ -25,6 +25,8 @@ libavcodec-extra
 # codecs por hardware (Intel/AMD refurbished: decode H.264/H.265 sin fundir CPU)
 gstreamer1.0-vaapi
 intel-media-va-driver-non-free
+# Intel Gen7 y anteriores (Bay Trail/Haswell — los Atom ASUS de la flota)
+i965-va-driver
 mesa-va-drivers
 # cámara/screencast vía PipeWire (Snapshot, compartir pantalla en Wayland)
 gstreamer1.0-pipewire
