@@ -16,6 +16,9 @@ hunspell-es
 # --- Photos, video, music, camera ---
 vlc
 kamoso
+# scheduling realtime para PipeWire (Recommends de pipewire-bin; sin él,
+# audio con cortes en CPUs viejas)
+rtkit
 gstreamer1.0-plugins-good
 gstreamer1.0-plugins-bad
 gstreamer1.0-plugins-ugly
@@ -33,12 +36,22 @@ gstreamer1.0-pipewire
 heif-gdk-pixbuf
 heif-thumbnailer
 webp-pixbuf-loader
+# WebP/TIFF/ICNS en apps Qt (Gwenview); HEIC en Gwenview NO tiene paquete
+# en trixie (falta kimageformats KF6) — limitación conocida
+qt6-image-formats-plugins
+# cámaras digitales (PTP) en Dolphin/Gwenview
+kamera
 
 # --- Email ---
 thunderbird
 thunderbird-l10n-es-es
 
 # --- Printing & scanning ---
+# descubrimiento de impresoras/escáneres de red (AirPrint/IPP Everywhere)
+# y nombres .local: cups-browsed y sane-airscan solo traen las libs de
+# avahi, el daemon es Recommends y con --no-install-recommends no entra
+avahi-daemon
+libnss-mdns
 cups
 cups-browsed
 ipp-usb
@@ -50,6 +63,13 @@ skanpage
 sane-airscan
 
 # --- Hardware / laptop ---
+# base regulatoria wifi (nada la arrastra como Depends; sin ella el kernel
+# capa canales 5GHz y potencia al dominio mundial)
+wireless-regdb
+# docks/monitores Thunderbolt (ThinkPads de la flota): autorización de
+# dispositivos vía bolt + UI en Preferencias
+bolt
+plasma-thunderbolt
 power-profiles-daemon
 ntfs-3g
 exfatprogs
@@ -75,6 +95,9 @@ fonts-crosextra-carlito
 fonts-crosextra-caladea
 
 # --- System utilities ---
+# xdg-open (Recommends en toda la pila; scripts y apps no-KDE lo usan
+# para abrir archivos/URLs)
+xdg-utils
 unzip
 zip
 # .7z y .rar (Ark los abre con estos instalados)

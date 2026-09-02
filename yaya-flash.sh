@@ -104,6 +104,7 @@ firmware-linux-nonfree
 firmware-iwlwifi
 firmware-realtek
 firmware-atheros
+firmware-brcm80211
 firmware-misc-nonfree
 firmware-sof-signed
 intel-microcode
