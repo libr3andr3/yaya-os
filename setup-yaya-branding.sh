@@ -210,6 +210,39 @@ fi
 # 4) Quitar la fuente APT del medio live (apt limpio en el instalado)
 sed -i '\|file:/run/live/medium|d' /etc/apt/sources.list 2>/dev/null || true
 
+# 5) UEFI: nuestra entrada recién creada PRIMERA en el orden de arranque,
+#    y fuera las entradas 'Yaya OS' viejas (instalaciones previas en otro
+#    disco cuyo GRUB queda apuntando a la nada). Solo tocamos entradas
+#    con nuestra etiqueta — jamás las de otros sistemas.
+if [ -d /sys/firmware/efi ] && command -v efibootmgr >/dev/null 2>&1; then
+  ESP_SRC=$(findmnt -no SOURCE /boot/efi 2>/dev/null || true)
+  ESP_GUID=$(blkid -s PARTUUID -o value "$ESP_SRC" 2>/dev/null | tr 'A-F' 'a-f' || true)
+  if [ -n "$ESP_GUID" ]; then
+    GOOD=""
+    OLDIFS=$IFS; IFS='
+'
+    for line in $(efibootmgr -v 2>/dev/null | grep '^Boot[0-9A-Fa-f]\{4\}.*Yaya OS' || true); do
+      num=$(printf '%s' "$line" | sed -n 's/^Boot\([0-9A-Fa-f]\{4\}\).*/\1/p')
+      [ -n "$num" ] || continue
+      case "$line" in
+        *"$ESP_GUID"*)
+          # apunta a NUESTRO ESP: la primera se queda, duplicados fuera
+          if [ -z "$GOOD" ]; then GOOD="$num"
+          else efibootmgr -q -b "$num" -B 2>/dev/null || true; fi ;;
+        *)
+          # 'Yaya OS' en otro disco = instalación previa: fuera
+          efibootmgr -q -b "$num" -B 2>/dev/null || true ;;
+      esac
+    done
+    IFS=$OLDIFS
+    if [ -n "$GOOD" ]; then
+      ORDER=$(efibootmgr 2>/dev/null | sed -n 's/^BootOrder: //p' || true)
+      REST=$(printf '%s' "$ORDER" | tr ',' '\n' | grep -vi "^$GOOD\$" | paste -sd, - 2>/dev/null || true)
+      efibootmgr -q -o "$GOOD${REST:+,$REST}" 2>/dev/null || true
+    fi
+  fi
+fi
+
 update-grub 2>/dev/null || true
 PI
 chmod +x /usr/local/sbin/yaya-postinstall

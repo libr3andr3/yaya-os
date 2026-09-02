@@ -1,12 +1,53 @@
 #!/bin/bash
 # ============================================================
 # Yaya OS — lanzador del instalador
-#   1) Si no hay internet, ofrece conectar a Wi-Fi (zenity + nmcli).
+#   1) Si hay tarjetas SD / USBs conectados (aparte del medio live),
+#      pide sacarlos: Calamares los lista como discos de destino y
+#      PRESELECCIONA el primer dispositivo — una SD en el lector puede
+#      quedar como destino por defecto y ser borrada (no hay opción de
+#      config en Calamares para ocultar removibles).
+#   2) Si no hay internet, ofrece conectar a Wi-Fi (zenity + nmcli).
 #      La conexión pasa al sistema instalado (módulo networkcfg).
-#   2) Lanza Calamares (pkexec, sin contraseña en la sesión live).
+#   3) Lanza Calamares (pkexec, sin contraseña en la sesión live).
 # ============================================================
 export LC_ALL=C.UTF-8
 T="Yaya OS — Wi-Fi"
+TM="Yaya OS Installer"
+
+live_disk() {
+  lsblk -no PKNAME "$(findmnt -no SOURCE /run/live/medium 2>/dev/null)" 2>/dev/null | head -n1
+}
+removable_media() {
+  local live dev name out=""
+  live="$(live_disk)"
+  for dev in /sys/block/*; do
+    name="${dev##*/}"
+    case "$name" in loop*|ram*|zram*|sr*|dm-*) continue ;; esac
+    [ "$name" = "$live" ] && continue
+    [ "$(cat "$dev/size" 2>/dev/null || echo 0)" -gt 0 ] || continue
+    # USB sticks: removable=1. Tarjetas SD por lector SDHCI: el kernel
+    # reporta removable=0 (por eso Calamares las trata como disco fijo);
+    # se detectan por device/type == "SD".
+    if [ "$(cat "$dev/removable" 2>/dev/null)" = "1" ] \
+       || [ "$(cat "$dev/device/type" 2>/dev/null)" = "SD" ]; then
+      out="${out}/dev/$name  $(lsblk -dno SIZE,MODEL "/dev/$name" 2>/dev/null | xargs)\n"
+    fi
+  done
+  printf '%b' "$out"
+}
+media_guard() {
+  local list
+  while list="$(removable_media)"; [ -n "$list" ]; do
+    if ! zenity --question --title="$TM" --width=480 \
+        --text="Unplug SD cards and USB drives before installing:\n\n<tt>${list}</tt>\nThe installer offers them as target disks and could <b>erase</b> one by mistake.\n\nRemove them and press «Check again»." \
+        --ok-label="Check again" --cancel-label="I want to install onto removable media"; then
+      # Cancel / cerrar = instalar a un removible A PROPÓSITO (raro pero
+      # legítimo, p.ej. SSD USB). Calamares aún pide confirmar el borrado.
+      break
+    fi
+  done
+}
+media_guard
 online() { [ "$(nmcli -t -g CONNECTIVITY general 2>/dev/null)" = "full" ]; }
 wifi_dev() { nmcli -t -f DEVICE,TYPE dev status 2>/dev/null | awk -F: '$2=="wifi"{print $1; exit}'; }
 
